@@ -823,6 +823,16 @@
                 <h1 class="podcast-title-detail">{{ podcast.title }}</h1>
             </div>
 
+            <!-- Media Player -->
+            {% if podcast.media_type == 'video' %}
+            <!-- Video Player -->
+            <div class="audio-player">
+                <video id="audioPlayer" controls preload="metadata" style="width: 100%; border-radius: 12px; margin-bottom: 1rem;">
+                    <source src="{{ url_for('static', filename='videos/' + podcast.audio_file) }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            {% else %}
             <!-- Audio Player -->
             <div class="audio-player">
                 <div class="player-controls">
@@ -858,6 +868,7 @@
             <audio id="audioPlayer" preload="metadata">
                 <source src="{{ url_for('static', filename='podcasts/' + podcast.audio_file) }}" type="audio/mpeg">
             </audio>
+            {% endif %}
 
             <!-- Creator Info -->
             <div class="podcast-creator">

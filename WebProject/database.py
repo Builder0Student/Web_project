@@ -53,6 +53,7 @@ def init_db():
             audio_file TEXT NOT NULL,
             cover_image TEXT DEFAULT 'default-cover.jpg',
             duration INTEGER DEFAULT 0,
+            media_type TEXT DEFAULT 'audio',
             category_id INTEGER,
             user_id INTEGER NOT NULL,
             plays INTEGER DEFAULT 0,
@@ -62,6 +63,12 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
     ''')
+
+    # Add media_type column if it doesn't exist (for existing databases)
+    try:
+        cursor.execute("SELECT media_type FROM podcasts LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE podcasts ADD COLUMN media_type TEXT DEFAULT 'audio'")
 
     # Playlists table
     cursor.execute('''

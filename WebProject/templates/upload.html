@@ -361,6 +361,78 @@
         75% { transform: translateX(10px); }
     }
 
+    .media-type-group {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .media-type-option {
+        flex: 1;
+        position: relative;
+    }
+
+    .media-type-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .media-type-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem;
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--bg-secondary-light);
+    }
+
+    body.dark-theme .media-type-label {
+        background: var(--primary-dark-theme);
+        border-color: var(--border-dark);
+    }
+
+    .media-type-option input[type="radio"]:checked + .media-type-label {
+        border-color: var(--primary-light);
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 165, 0, 0.1));
+    }
+
+    body.dark-theme .media-type-option input[type="radio"]:checked + .media-type-label {
+        border-color: var(--accent-gold);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 193, 7, 0.1));
+    }
+
+    .media-type-label i {
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+        color: var(--text-secondary-light);
+        transition: all 0.3s ease;
+    }
+
+    body.dark-theme .media-type-label i {
+        color: var(--text-secondary-dark);
+    }
+
+    .media-type-option input[type="radio"]:checked + .media-type-label i {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .media-type-option input[type="radio"]:checked + .media-type-label i {
+        color: var(--accent-gold);
+    }
+
+    .media-type-label span {
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .media-type-label span {
+        color: var(--text-dark);
+    }
+
     @media (max-width: 768px) {
         .upload-card {
             padding: 2rem 1.5rem;
@@ -425,25 +497,46 @@
                             {% endfor %}
                         </select>
                     </div>
+
+                    <!-- Media Type Selection -->
+                    <div class="form-group">
+                        <label data-translate="upload.media_type">Content Type *</label>
+                        <div class="media-type-group">
+                            <div class="media-type-option">
+                                <input type="radio" id="type_audio" name="media_type" value="audio" checked>
+                                <label for="type_audio" class="media-type-label">
+                                    <i class="fas fa-microphone"></i>
+                                    <span data-translate="upload.voice_only">Voice Only (صوت فقط)</span>
+                                </label>
+                            </div>
+                            <div class="media-type-option">
+                                <input type="radio" id="type_video" name="media_type" value="video">
+                                <label for="type_video" class="media-type-label">
+                                    <i class="fas fa-video"></i>
+                                    <span data-translate="upload.video">Video</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Audio File Upload -->
+                <!-- Media File Upload -->
                 <div class="form-section">
                     <div class="section-title">
-                        <i class="fas fa-microphone"></i>
-                        <span data-translate="upload.audio_file">Audio File</span>
+                        <i class="fas fa-microphone" id="media_icon"></i>
+                        <span id="media_label" data-translate="upload.media_file">Media File</span>
                     </div>
 
-                    <input type="file" id="audio_file" name="audio_file" accept="audio/*"
+                    <input type="file" id="audio_file" name="audio_file" accept="audio/*,video/*"
                            style="display: none;" required onchange="handleAudioFile(this)">
 
                     <div class="file-upload" onclick="document.getElementById('audio_file').click()"
                          ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'audio')">
                         <div class="file-upload-icon">
-                            <i class="fas fa-file-audio"></i>
+                            <i class="fas fa-file-audio" id="file_icon"></i>
                         </div>
                         <div class="file-upload-text" data-translate="upload.click_upload">Click to upload or drag and drop</div>
-                        <div class="file-upload-subtext" data-translate="upload.audio_formats">MP3, WAV, M4A, OGG (Max 500MB)</div>
+                        <div class="file-upload-subtext" id="media_formats" data-translate="upload.audio_formats">MP3, WAV, M4A, OGG (Max 500MB)</div>
                     </div>
 
                     <div class="file-info" id="audioInfo">
@@ -504,6 +597,33 @@
 </div>
 
 <script>
+    // Handle media type change
+    document.querySelectorAll('input[name="media_type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            updateMediaTypeUI(this.value);
+        });
+    });
+
+    function updateMediaTypeUI(mediaType) {
+        const currentLang = localStorage.getItem('language') || 'en';
+        const mediaIcon = document.getElementById('media_icon');
+        const mediaLabel = document.getElementById('media_label');
+        const fileIcon = document.getElementById('file_icon');
+        const mediaFormats = document.getElementById('media_formats');
+
+        if (mediaType === 'video') {
+            mediaIcon.className = 'fas fa-video';
+            mediaLabel.textContent = translate('upload.video_file', currentLang);
+            fileIcon.className = 'fas fa-file-video';
+            mediaFormats.textContent = translate('upload.video_formats', currentLang);
+        } else {
+            mediaIcon.className = 'fas fa-microphone';
+            mediaLabel.textContent = translate('upload.audio_file', currentLang);
+            fileIcon.className = 'fas fa-file-audio';
+            mediaFormats.textContent = translate('upload.audio_formats', currentLang);
+        }
+    }
+
     function handleAudioFile(input) {
         const file = input.files[0];
         if (file) {
@@ -588,7 +708,8 @@
     document.getElementById('uploadForm').addEventListener('submit', function(e) {
         const title = document.getElementById('title').value.trim();
         const category = document.getElementById('category_id').value;
-        const audioFile = document.getElementById('audio_file').files[0];
+        const mediaType = document.querySelector('input[name="media_type"]:checked').value;
+        const mediaFile = document.getElementById('audio_file').files[0];
 
         // Validate title
         if (!title) {
@@ -610,33 +731,42 @@
             return false;
         }
 
-        // Validate audio file
-        if (!audioFile) {
+        // Validate media file
+        if (!mediaFile) {
             e.preventDefault();
-            showError('validation.audio_required');
+            showError(mediaType === 'video' ? 'validation.video_required' : 'validation.audio_required');
             return false;
         }
 
         // Validate file size
         const maxSize = 500 * 1024 * 1024; // 500MB
-        if (audioFile.size > maxSize) {
+        if (mediaFile.size > maxSize) {
             e.preventDefault();
             showError('validation.file_too_large');
             return false;
         }
 
-        if (audioFile.size === 0) {
+        if (mediaFile.size === 0) {
             e.preventDefault();
             showError('validation.file_empty');
             return false;
         }
 
-        // Validate file type
-        const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/m4a', 'audio/x-m4a', 'audio/ogg'];
-        if (!allowedTypes.includes(audioFile.type) && !audioFile.name.match(/\.(mp3|wav|m4a|ogg)$/i)) {
-            e.preventDefault();
-            showError('validation.invalid_format');
-            return false;
+        // Validate file type based on media type
+        if (mediaType === 'video') {
+            const allowedVideoTypes = ['video/mp4', 'video/avi', 'video/quicktime', 'video/x-msvideo', 'video/x-flv', 'video/x-matroska', 'video/webm'];
+            if (!allowedVideoTypes.includes(mediaFile.type) && !mediaFile.name.match(/\.(mp4|avi|mov|wmv|flv|mkv|webm)$/i)) {
+                e.preventDefault();
+                showError('validation.invalid_video_format');
+                return false;
+            }
+        } else {
+            const allowedAudioTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/m4a', 'audio/x-m4a', 'audio/ogg'];
+            if (!allowedAudioTypes.includes(mediaFile.type) && !mediaFile.name.match(/\.(mp3|wav|m4a|ogg)$/i)) {
+                e.preventDefault();
+                showError('validation.invalid_format');
+                return false;
+            }
         }
 
         // Show loading state

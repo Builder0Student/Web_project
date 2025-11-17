@@ -10,13 +10,16 @@ from database import get_db, init_db, seed_initial_data
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'change-this-to-random-secret-key-in-production'
 app.config['UPLOAD_FOLDER'] = 'static/podcasts'
+app.config['VIDEO_FOLDER'] = 'static/videos'
 app.config['COVER_FOLDER'] = 'static/covers'
 app.config['MAX_CONTENT_LENGTH'] = 500 * 1024 * 1024  # 500MB max
 app.config['ALLOWED_AUDIO_EXTENSIONS'] = {'mp3', 'wav', 'm4a', 'ogg'}
+app.config['ALLOWED_VIDEO_EXTENSIONS'] = {'mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm'}
 app.config['ALLOWED_IMAGE_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'webp'}
 
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(app.config['VIDEO_FOLDER'], exist_ok=True)
 os.makedirs(app.config['COVER_FOLDER'], exist_ok=True)
 
 
@@ -27,6 +30,8 @@ def allowed_file(filename, file_type='audio'):
     ext = filename.rsplit('.', 1)[1].lower()
     if file_type == 'audio':
         return ext in app.config['ALLOWED_AUDIO_EXTENSIONS']
+    elif file_type == 'video':
+        return ext in app.config['ALLOWED_VIDEO_EXTENSIONS']
     elif file_type == 'image':
         return ext in app.config['ALLOWED_IMAGE_EXTENSIONS']
     return False
@@ -335,12 +340,13 @@ def upload():
             title = request.form.get('title', '').strip()
             description = request.form.get('description', '').strip()
             category_id = request.form.get('category_id')
-            audio_file = request.files.get('audio_file')
+            media_type = request.form.get('media_type', 'audio')  # 'audio' or 'video'
+            media_file = request.files.get('audio_file')  # Name stays 'audio_file' for backward compatibility
             cover_image = request.files.get('cover_image')
 
             # Validate title
             if not title:
-                flash('Podcast title is required', 'error')
+                flash('Content title is required', 'error')
                 return redirect(url_for('upload'))
 
             if len(title) < 3:
@@ -352,41 +358,50 @@ def upload():
                 flash('Please select a category', 'error')
                 return redirect(url_for('upload'))
 
-            # Validate audio file
-            if not audio_file or audio_file.filename == '':
-                flash('Audio file is required', 'error')
+            # Validate media file
+            if not media_file or media_file.filename == '':
+                flash('Media file is required', 'error')
                 return redirect(url_for('upload'))
 
-            if not allowed_file(audio_file.filename, 'audio'):
-                flash('Invalid audio file format. Allowed formats: MP3, WAV, M4A, OGG', 'error')
+            # Validate file type based on media_type
+            if media_type == 'video':
+                if not allowed_file(media_file.filename, 'video'):
+                    flash('Invalid video file format. Allowed formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM', 'error')
+                    return redirect(url_for('upload'))
+            else:
+                if not allowed_file(media_file.filename, 'audio'):
+                    flash('Invalid audio file format. Allowed formats: MP3, WAV, M4A, OGG', 'error')
+                    return redirect(url_for('upload'))
+
+            # Check media file size (max 500MB)
+            media_file.seek(0, os.SEEK_END)
+            media_size = media_file.tell()
+            media_file.seek(0)
+
+            if media_size > app.config['MAX_CONTENT_LENGTH']:
+                flash('Media file is too large. Maximum size is 500MB', 'error')
                 return redirect(url_for('upload'))
 
-            # Check audio file size (max 500MB)
-            audio_file.seek(0, os.SEEK_END)
-            audio_size = audio_file.tell()
-            audio_file.seek(0)
-
-            if audio_size > app.config['MAX_CONTENT_LENGTH']:
-                flash('Audio file is too large. Maximum size is 500MB', 'error')
+            if media_size == 0:
+                flash('Media file is empty', 'error')
                 return redirect(url_for('upload'))
 
-            if audio_size == 0:
-                flash('Audio file is empty', 'error')
-                return redirect(url_for('upload'))
-
-            # Save audio file
-            audio_filename = secure_filename(f"{datetime.now().timestamp()}_{audio_file.filename}")
-            audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
-            audio_file.save(audio_path)
+            # Save media file to appropriate folder
+            media_filename = secure_filename(f"{datetime.now().timestamp()}_{media_file.filename}")
+            if media_type == 'video':
+                media_path = os.path.join(app.config['VIDEO_FOLDER'], media_filename)
+            else:
+                media_path = os.path.join(app.config['UPLOAD_FOLDER'], media_filename)
+            media_file.save(media_path)
 
             # Save cover image if provided
             cover_filename = 'default-cover.jpg'
             if cover_image and cover_image.filename != '':
                 if not allowed_file(cover_image.filename, 'image'):
                     flash('Invalid cover image format. Allowed formats: PNG, JPG, JPEG, WEBP', 'error')
-                    # Remove uploaded audio file
-                    if os.path.exists(audio_path):
-                        os.remove(audio_path)
+                    # Remove uploaded media file
+                    if os.path.exists(media_path):
+                        os.remove(media_path)
                     return redirect(url_for('upload'))
 
                 cover_filename = secure_filename(f"{datetime.now().timestamp()}_{cover_image.filename}")
@@ -396,13 +411,13 @@ def upload():
             # Insert into database
             conn = get_db()
             conn.execute('''
-                INSERT INTO podcasts (title, description, audio_file, cover_image, category_id, user_id)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (title, description, audio_filename, cover_filename, category_id, session['user_id']))
+                INSERT INTO podcasts (title, description, audio_file, cover_image, media_type, category_id, user_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (title, description, media_filename, cover_filename, media_type, category_id, session['user_id']))
             conn.commit()
             conn.close()
 
-            flash('Podcast uploaded successfully!', 'success')
+            flash('Content uploaded successfully!', 'success')
             return redirect(url_for('profile', username=session['username']))
 
         except Exception as e:
