@@ -333,28 +333,28 @@
     <div class="container">
         <div class="auth-card" style="margin: 0 auto;">
             <div class="auth-header">
-                <h1>Welcome Back</h1>
-                <p>Sign in to continue to Arab Podcast</p>
+                <h1 data-translate="login.title">Welcome Back</h1>
+                <p data-translate="login.subtitle">Sign in to continue to Arab Podcast</p>
             </div>
 
             <div class="demo-credentials">
-                <h4><i class="fas fa-info-circle"></i> Demo Admin Account</h4>
-                <p><strong>Username:</strong> admin</p>
-                <p><strong>Password:</strong> admin123</p>
+                <h4><i class="fas fa-info-circle"></i> <span data-translate="login.demo_title">Demo Admin Account</span></h4>
+                <p><strong data-translate="login.username">Username:</strong> admin</p>
+                <p><strong data-translate="login.password">Password:</strong> admin123</p>
             </div>
 
             <form action="{{ url_for('login') }}" method="post">
                 <div class="form-group">
-                    <label for="username">Username or Email</label>
+                    <label for="username" data-translate="login.username_email">Username or Email</label>
                     <input type="text" id="username" name="username" class="form-input"
-                           placeholder="Enter your username or email" required>
+                           data-translate-placeholder="login.username_placeholder" placeholder="Enter your username or email" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password" data-translate="login.password_label">Password</label>
                     <div class="password-input-wrapper">
                         <input type="password" id="password" name="password" class="form-input"
-                               placeholder="Enter your password" required>
+                               data-translate-placeholder="login.password_placeholder" placeholder="Enter your password" required>
                         <i class="fas fa-eye password-toggle" onclick="togglePassword()"></i>
                     </div>
                 </div>
@@ -362,18 +362,18 @@
                 <div class="form-extras">
                     <div class="remember-me">
                         <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Remember me</label>
+                        <label for="remember" data-translate="login.remember">Remember me</label>
                     </div>
-                    <a href="#" class="forgot-password">Forgot password?</a>
+                    <a href="#" class="forgot-password" data-translate="login.forgot">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn-submit">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
+                    <i class="fas fa-sign-in-alt"></i> <span data-translate="login.signin">Sign In</span>
                 </button>
             </form>
 
             <div class="auth-footer">
-                Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a>
+                <span data-translate="login.no_account">Don't have an account?</span> <a href="{{ url_for('register') }}" data-translate="nav.signup">Sign Up</a>
             </div>
         </div>
     </div>

@@ -385,8 +385,8 @@
 <div class="container">
     <div class="upload-container">
         <div class="upload-header">
-            <h1><i class="fas fa-cloud-upload-alt"></i> Upload Your Podcast</h1>
-            <p>Share your voice with the world</p>
+            <h1><i class="fas fa-cloud-upload-alt"></i> <span data-translate="upload.title">Upload Your Podcast</span></h1>
+            <p data-translate="upload.subtitle">Share your voice with the world</p>
         </div>
 
         <div class="upload-card">
@@ -400,26 +400,26 @@
                 <div class="form-section">
                     <div class="section-title">
                         <i class="fas fa-info-circle"></i>
-                        Basic Information
+                        <span data-translate="upload.basic_info">Basic Information</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="title">Podcast Title *</label>
+                        <label for="title" data-translate="upload.podcast_title">Podcast Title</label>
                         <input type="text" id="title" name="title" class="form-input"
-                               placeholder="Enter an engaging title" required>
+                               data-translate-placeholder="upload.podcast_title" placeholder="Enter an engaging title" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="description">Description</label>
+                        <label for="description" data-translate="upload.description">Description</label>
                         <textarea id="description" name="description" class="form-textarea"
-                                  placeholder="Describe your podcast..."></textarea>
-                        <div class="form-hint">Give listeners a compelling overview of your content</div>
+                                  data-translate-placeholder="upload.description_placeholder" placeholder="Describe your podcast..."></textarea>
+                        <div class="form-hint" data-translate="upload.description_hint">Give listeners a compelling overview of your content</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="category_id">Category *</label>
+                        <label for="category_id" data-translate="upload.category">Category *</label>
                         <select id="category_id" name="category_id" class="form-select" required>
-                            <option value="">Select a category</option>
+                            <option value="" data-translate="upload.select_category">Select a category</option>
                             {% for category in categories %}
                             <option value="{{ category.id }}">{{ category.name }}</option>
                             {% endfor %}
@@ -431,7 +431,7 @@
                 <div class="form-section">
                     <div class="section-title">
                         <i class="fas fa-microphone"></i>
-                        Audio File
+                        <span data-translate="upload.audio_file">Audio File</span>
                     </div>
 
                     <input type="file" id="audio_file" name="audio_file" accept="audio/*"
@@ -442,8 +442,8 @@
                         <div class="file-upload-icon">
                             <i class="fas fa-file-audio"></i>
                         </div>
-                        <div class="file-upload-text">Click to upload or drag and drop</div>
-                        <div class="file-upload-subtext">MP3, WAV, M4A, OGG (Max 500MB)</div>
+                        <div class="file-upload-text" data-translate="upload.click_upload">Click to upload or drag and drop</div>
+                        <div class="file-upload-subtext" data-translate="upload.audio_formats">MP3, WAV, M4A, OGG (Max 500MB)</div>
                     </div>
 
                     <div class="file-info" id="audioInfo">
@@ -462,7 +462,7 @@
                 <div class="form-section">
                     <div class="section-title">
                         <i class="fas fa-image"></i>
-                        Cover Image
+                        <span data-translate="upload.cover_image">Cover Image</span>
                     </div>
 
                     <input type="file" id="cover_image" name="cover_image" accept="image/*"
@@ -473,8 +473,8 @@
                         <div class="file-upload-icon">
                             <i class="fas fa-image"></i>
                         </div>
-                        <div class="file-upload-text">Click to upload or drag and drop</div>
-                        <div class="file-upload-subtext">PNG, JPG, JPEG, WEBP (Recommended: 1:1 ratio)</div>
+                        <div class="file-upload-text" data-translate="upload.click_upload">Click to upload or drag and drop</div>
+                        <div class="file-upload-subtext" data-translate="upload.image_formats">PNG, JPG, JPEG, WEBP (Recommended: 1:1 ratio)</div>
                     </div>
 
                     <div class="file-info" id="coverInfo">
@@ -492,10 +492,10 @@
                 <!-- Submit Actions -->
                 <div class="form-actions">
                     <button type="button" class="btn-cancel" onclick="window.history.back()">
-                        <i class="fas fa-times"></i> Cancel
+                        <i class="fas fa-times"></i> <span data-translate="common.cancel">Cancel</span>
                     </button>
                     <button type="submit" class="btn-submit">
-                        <i class="fas fa-upload"></i> Upload Podcast
+                        <i class="fas fa-upload"></i> <span data-translate="upload.submit" id="submitText">Upload Podcast</span>
                     </button>
                 </div>
             </form>
@@ -567,11 +567,12 @@
     }
 
     // Show error message
-    function showError(message) {
+    function showError(messageKey) {
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
+        const currentLang = localStorage.getItem('language') || 'en';
 
-        errorText.textContent = message;
+        errorText.textContent = translate(messageKey, currentLang);
         errorMessage.classList.add('show');
 
         // Scroll to error
@@ -592,27 +593,27 @@
         // Validate title
         if (!title) {
             e.preventDefault();
-            showError('Please enter a podcast title');
+            showError('validation.title_required');
             return false;
         }
 
         if (title.length < 3) {
             e.preventDefault();
-            showError('Title must be at least 3 characters long');
+            showError('validation.title_short');
             return false;
         }
 
         // Validate category
         if (!category) {
             e.preventDefault();
-            showError('Please select a category');
+            showError('validation.category_required');
             return false;
         }
 
         // Validate audio file
         if (!audioFile) {
             e.preventDefault();
-            showError('Please upload an audio file (MP3, WAV, M4A, or OGG)');
+            showError('validation.audio_required');
             return false;
         }
 
@@ -620,13 +621,13 @@
         const maxSize = 500 * 1024 * 1024; // 500MB
         if (audioFile.size > maxSize) {
             e.preventDefault();
-            showError('Audio file is too large. Maximum size is 500MB');
+            showError('validation.file_too_large');
             return false;
         }
 
         if (audioFile.size === 0) {
             e.preventDefault();
-            showError('Audio file is empty. Please select a valid audio file');
+            showError('validation.file_empty');
             return false;
         }
 
@@ -634,13 +635,16 @@
         const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/m4a', 'audio/x-m4a', 'audio/ogg'];
         if (!allowedTypes.includes(audioFile.type) && !audioFile.name.match(/\.(mp3|wav|m4a|ogg)$/i)) {
             e.preventDefault();
-            showError('Invalid audio file format. Please upload MP3, WAV, M4A, or OGG');
+            showError('validation.invalid_format');
             return false;
         }
 
         // Show loading state
+        const currentLang = localStorage.getItem('language') || 'en';
         const submitBtn = this.querySelector('.btn-submit');
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        const submitText = submitBtn.querySelector('#submitText');
+        submitText.textContent = translate('upload.uploading', currentLang);
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + submitText.textContent;
         submitBtn.disabled = true;
     });
 </script>
