@@ -591,25 +591,25 @@
             </a>
 
             <ul class="nav-links">
-                <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="{{ url_for('browse') }}"><i class="fas fa-compass"></i> Browse</a></li>
+                <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> <span data-translate="nav.home">Home</span></a></li>
+                <li><a href="{{ url_for('browse') }}"><i class="fas fa-compass"></i> <span data-translate="nav.browse">Browse</span></a></li>
                 {% if user %}
-                <li><a href="{{ url_for('library') }}"><i class="fas fa-bookmark"></i> Library</a></li>
-                <li><a href="{{ url_for('upload') }}"><i class="fas fa-cloud-upload-alt"></i> Upload</a></li>
+                <li><a href="{{ url_for('library') }}"><i class="fas fa-bookmark"></i> <span data-translate="nav.library">Library</span></a></li>
+                <li><a href="{{ url_for('upload') }}"><i class="fas fa-cloud-upload-alt"></i> <span data-translate="nav.upload">Upload</span></a></li>
                 {% endif %}
             </ul>
 
             <div class="search-bar">
                 <i class="fas fa-search"></i>
                 <form action="{{ url_for('browse') }}" method="get" style="width: 100%;">
-                    <input type="text" name="q" placeholder="Search podcasts..." value="{{ request.args.get('q', '') }}">
+                    <input type="text" name="q" data-translate-placeholder="search.placeholder" placeholder="Search podcasts..." value="{{ request.args.get('q', '') }}">
                 </form>
             </div>
 
             <div class="nav-actions">
-                <button class="lang-toggle" onclick="toggleLanguage()" title="Toggle Right-to-Left Layout">
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Toggle Language">
                     <i class="fas fa-globe"></i>
-                    <span id="lang-text">RTL</span>
+                    <span id="lang-text">AR</span>
                 </button>
 
                 <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Theme">
@@ -619,7 +619,7 @@
                 {% if user %}
                     {% if user.is_admin %}
                     <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
-                        <i class="fas fa-cog"></i> Admin
+                        <i class="fas fa-cog"></i> <span data-translate="nav.admin">Admin</span>
                     </a>
                     {% endif %}
                     <div class="user-menu">
@@ -630,11 +630,11 @@
                         </a>
                     </div>
                     <a href="{{ url_for('logout') }}" class="btn btn-outline">
-                        <i class="fas fa-sign-out-alt"></i> Logout
+                        <i class="fas fa-sign-out-alt"></i> <span data-translate="nav.logout">Logout</span>
                     </a>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="btn btn-outline">Login</a>
-                    <a href="{{ url_for('register') }}" class="btn btn-primary">Sign Up</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline"><span data-translate="nav.login">Login</span></a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary"><span data-translate="nav.signup">Sign Up</span></a>
                 {% endif %}
             </div>
         </div>
@@ -663,34 +663,34 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>Arab Podcast</h3>
-                <p style="color: var(--text-secondary-light);">Your premier destination for high-quality podcasts across all genres and topics.</p>
+                <h3 data-translate="footer.about_title">Arab Podcast</h3>
+                <p style="color: var(--text-secondary-light);" data-translate="footer.about_text">Your premier destination for high-quality podcasts across all genres and topics.</p>
             </div>
             <div class="footer-section">
-                <h3>Quick Links</h3>
+                <h3 data-translate="footer.quicklinks_title">Quick Links</h3>
                 <ul>
-                    <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('browse') }}">Browse</a></li>
+                    <li><a href="{{ url_for('index') }}"><span data-translate="nav.home">Home</span></a></li>
+                    <li><a href="{{ url_for('browse') }}"><span data-translate="nav.browse">Browse</span></a></li>
                     {% if user %}
-                    <li><a href="{{ url_for('library') }}">Library</a></li>
-                    <li><a href="{{ url_for('upload') }}">Upload</a></li>
+                    <li><a href="{{ url_for('library') }}"><span data-translate="nav.library">Library</span></a></li>
+                    <li><a href="{{ url_for('upload') }}"><span data-translate="nav.upload">Upload</span></a></li>
                     {% else %}
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('register') }}">Sign Up</a></li>
+                    <li><a href="{{ url_for('login') }}"><span data-translate="nav.login">Login</span></a></li>
+                    <li><a href="{{ url_for('register') }}"><span data-translate="nav.signup">Sign Up</span></a></li>
                     {% endif %}
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Categories</h3>
+                <h3 data-translate="footer.categories_title">Categories</h3>
                 <ul>
-                    <li><a href="{{ url_for('browse', category=1) }}">Technology</a></li>
-                    <li><a href="{{ url_for('browse', category=2) }}">Business</a></li>
-                    <li><a href="{{ url_for('browse', category=3) }}">Education</a></li>
-                    <li><a href="{{ url_for('browse', category=4) }}">Entertainment</a></li>
+                    <li><a href="{{ url_for('browse', category=1) }}"><span data-translate="category.technology">Technology</span></a></li>
+                    <li><a href="{{ url_for('browse', category=2) }}"><span data-translate="category.business">Business</span></a></li>
+                    <li><a href="{{ url_for('browse', category=3) }}"><span data-translate="category.education">Education</span></a></li>
+                    <li><a href="{{ url_for('browse', category=4) }}"><span data-translate="category.entertainment">Entertainment</span></a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Follow Us</h3>
+                <h3 data-translate="footer.follow_title">Follow Us</h3>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
                     <a href="https://www.instagram.com/ahmed_0taku/" target="_blank" rel="noopener noreferrer" title="Instagram"
                        style="font-size: 1.5rem; color: var(--primary-light); transition: all 0.3s ease;">
@@ -708,28 +708,36 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Arab Podcast. All rights reserved.</p>
+            <p data-translate="footer.copyright">&copy; 2024 Arab Podcast. All rights reserved.</p>
         </div>
     </footer>
 
+    <!-- Translation System -->
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
+
     <script>
-        // Language Toggle (RTL/LTR Layout)
+        // Language Toggle with Full Translation
         function toggleLanguage() {
             const htmlRoot = document.getElementById('html-root');
             const langText = document.getElementById('lang-text');
-            const currentDir = htmlRoot.getAttribute('dir');
+            const currentLang = localStorage.getItem('language') || 'en';
 
-            if (currentDir === 'ltr' || !currentDir) {
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+
+            if (newLang === 'ar') {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
-                langText.textContent = 'LTR';
-                localStorage.setItem('layout', 'rtl');
+                langText.textContent = 'EN';
+                localStorage.setItem('language', 'ar');
             } else {
                 htmlRoot.setAttribute('lang', 'en');
                 htmlRoot.setAttribute('dir', 'ltr');
-                langText.textContent = 'RTL';
-                localStorage.setItem('layout', 'ltr');
+                langText.textContent = 'AR';
+                localStorage.setItem('language', 'en');
             }
+
+            // Apply translations
+            applyTranslations(newLang);
         }
 
         // Theme Toggle
@@ -760,16 +768,23 @@
                 themeIcon.classList.add('fa-sun');
             }
 
-            // Load layout preference
-            const savedLayout = localStorage.getItem('layout');
+            // Load language preference
+            const savedLang = localStorage.getItem('language') || 'en';
             const htmlRoot = document.getElementById('html-root');
             const langText = document.getElementById('lang-text');
 
-            if (savedLayout === 'rtl') {
+            if (savedLang === 'ar') {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
-                langText.textContent = 'LTR';
+                langText.textContent = 'EN';
+            } else {
+                htmlRoot.setAttribute('lang', 'en');
+                htmlRoot.setAttribute('dir', 'ltr');
+                langText.textContent = 'AR';
             }
+
+            // Apply translations on page load
+            applyTranslations(savedLang);
         });
 
         // Auto-dismiss flash messages
