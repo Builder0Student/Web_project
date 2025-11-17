@@ -360,24 +360,24 @@
 {% block content %}
 <div class="container">
     <div class="browse-header">
-        <h1><i class="fas fa-compass"></i> Browse Podcasts</h1>
-        <p>Discover your next favorite podcast</p>
+        <h1><i class="fas fa-compass"></i> <span data-translate="browse.title">Browse Podcasts</span></h1>
+        <p data-translate="browse.subtitle">Discover your next favorite podcast</p>
     </div>
 
     <form action="{{ url_for('browse') }}" method="get">
         <div class="browse-controls">
             <div class="filter-group">
-                <label for="search"><i class="fas fa-search"></i> Search</label>
+                <label for="search"><i class="fas fa-search"></i> <span data-translate="browse.search">Search</span></label>
                 <input type="text" id="search" name="q" class="filter-input"
-                       placeholder="Search podcasts..." value="{{ search_query }}">
+                       data-translate-placeholder="browse.search_placeholder" placeholder="Search podcasts..." value="{{ search_query }}">
             </div>
 
             <div class="filter-group">
-                <label for="category"><i class="fas fa-tag"></i> Category</label>
+                <label for="category"><i class="fas fa-tag"></i> <span data-translate="browse.category">Category</span></label>
                 <select id="category" name="category" class="filter-select">
-                    <option value="">All Categories</option>
+                    <option value="" data-translate="browse.all_categories">All Categories</option>
                     {% for category in categories %}
-                    <option value="{{ category.id }}" {% if selected_category == category.id|string %}selected{% endif %}>
+                    <option value="{{ category.id }}" {% if selected_category == category.id|string %}selected{% endif %} data-translate="category.{{ category.name|lower }}">
                         {{ category.name }}
                     </option>
                     {% endfor %}
@@ -385,27 +385,27 @@
             </div>
 
             <button type="submit" class="btn-filter">
-                <i class="fas fa-filter"></i> Apply Filters
+                <i class="fas fa-filter"></i> <span data-translate="browse.apply_filters">Apply Filters</span>
             </button>
         </div>
     </form>
 
     <div class="results-info">
         <div class="results-count">
-            Found <span>{{ podcasts|length }}</span> podcasts
+            <span data-translate="browse.found">Found</span> <span>{{ podcasts|length }}</span> <span data-translate="browse.podcasts">podcasts</span>
         </div>
         <div class="sort-options">
             <a href="{{ url_for('browse', q=search_query, category=selected_category, sort='recent') }}"
                class="sort-btn {% if sort_by == 'recent' %}active{% endif %}">
-                <i class="fas fa-clock"></i> Recent
+                <i class="fas fa-clock"></i> <span data-translate="browse.recent">Recent</span>
             </a>
             <a href="{{ url_for('browse', q=search_query, category=selected_category, sort='popular') }}"
                class="sort-btn {% if sort_by == 'popular' %}active{% endif %}">
-                <i class="fas fa-fire"></i> Popular
+                <i class="fas fa-fire"></i> <span data-translate="browse.popular">Popular</span>
             </a>
             <a href="{{ url_for('browse', q=search_query, category=selected_category, sort='liked') }}"
                class="sort-btn {% if sort_by == 'liked' %}active{% endif %}">
-                <i class="fas fa-heart"></i> Most Liked
+                <i class="fas fa-heart"></i> <span data-translate="browse.most_liked">Most Liked</span>
             </a>
         </div>
     </div>
@@ -437,8 +437,8 @@
     {% else %}
     <div class="no-results">
         <i class="fas fa-search"></i>
-        <h3>No Podcasts Found</h3>
-        <p>Try adjusting your search or filters</p>
+        <h3 data-translate="browse.no_results">No Podcasts Found</h3>
+        <p data-translate="browse.try_adjusting">Try adjusting your search or filters</p>
     </div>
     {% endif %}
 </div>

@@ -19,11 +19,14 @@
 
     .podcast-cover-large {
         width: 100%;
+        height: 100%;
         aspect-ratio: 1;
         object-fit: cover;
+        object-position: center;
         border-radius: 20px;
         box-shadow: 0 10px 50px var(--shadow-light);
         margin-bottom: 1.5rem;
+        display: block;
     }
 
     body.dark-theme .podcast-cover-large {
@@ -791,25 +794,25 @@
                 <button class="btn-action btn-favorite {% if is_favorited %}active{% endif %}"
                         onclick="toggleFavorite({{ podcast.id }})">
                     <i class="fas fa-heart"></i>
-                    <span id="favorite-text">{% if is_favorited %}Liked{% else %}Like{% endif %}</span>
+                    <span id="favorite-text" data-translate="{% if is_favorited %}podcast.liked{% else %}podcast.like{% endif %}">{% if is_favorited %}Liked{% else %}Like{% endif %}</span>
                 </button>
             </div>
 
             {% if user %}
             <button class="btn-action btn-playlist" onclick="openPlaylistModal()" style="margin-top: 1rem; width: 100%;">
                 <i class="fas fa-plus"></i>
-                <span>Save to Playlist</span>
+                <span data-translate="podcast.save_to_playlist">Save to Playlist</span>
             </button>
             {% endif %}
 
             <div class="podcast-stats-detail">
                 <div class="stat-item">
                     <div class="stat-value"><i class="fas fa-play-circle"></i> {{ podcast.plays }}</div>
-                    <div class="stat-label">Plays</div>
+                    <div class="stat-label" data-translate="podcast.plays">Plays</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value"><i class="fas fa-heart"></i> <span id="favorites-count">{{ podcast.favorites_count }}</span></div>
-                    <div class="stat-label">Favorites</div>
+                    <div class="stat-label" data-translate="podcast.favorites">Favorites</div>
                 </div>
             </div>
         </div>
@@ -888,25 +891,25 @@
 
             <!-- Description -->
             <div class="podcast-description">
-                <h2 class="section-title">About this podcast</h2>
+                <h2 class="section-title" data-translate="podcast.about">About this podcast</h2>
                 {{ podcast.description or 'No description available.' }}
             </div>
 
             <!-- Comments Section -->
             <div class="comments-section">
-                <h2 class="section-title"><i class="fas fa-comments"></i> Comments ({{ comments|length }})</h2>
+                <h2 class="section-title"><i class="fas fa-comments"></i> <span data-translate="podcast.comments">Comments</span> ({{ comments|length }})</h2>
 
                 {% if user %}
                 <form class="comment-form" onsubmit="addComment(event)">
                     <textarea class="comment-textarea" id="commentText"
-                              placeholder="Share your thoughts..." required></textarea>
+                              data-translate-placeholder="podcast.share_thoughts" placeholder="Share your thoughts..." required></textarea>
                     <button type="submit" class="btn-primary" style="margin-top: 1rem;">
-                        <i class="fas fa-paper-plane"></i> Post Comment
+                        <i class="fas fa-paper-plane"></i> <span data-translate="podcast.post_comment">Post Comment</span>
                     </button>
                 </form>
                 {% else %}
                 <p style="text-align: center; padding: 2rem; color: var(--text-secondary-light);">
-                    <a href="{{ url_for('login') }}" style="color: var(--primary-light);">Login</a> to leave a comment
+                    <a href="{{ url_for('login') }}" style="color: var(--primary-light);"><span data-translate="nav.login">Login</span></a> <span data-translate="podcast.to_comment">to leave a comment</span>
                 </p>
                 {% endif %}
 
@@ -931,7 +934,7 @@
     <!-- Related Podcasts -->
     {% if related %}
     <div class="related-section">
-        <h2 class="section-title">Related Podcasts</h2>
+        <h2 class="section-title" data-translate="podcast.related">Related Podcasts</h2>
         <div class="related-grid">
             {% for pod in related %}
             <a href="{{ url_for('podcast_detail', podcast_id=pod.id) }}" class="related-card">
@@ -954,7 +957,7 @@
 <div class="modal" id="playlistModal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Save to Playlist</h2>
+            <h2 class="modal-title" data-translate="podcast.save_to_playlist">Save to Playlist</h2>
             <button class="modal-close" onclick="closePlaylistModal()">
                 <i class="fas fa-times"></i>
             </button>
@@ -965,15 +968,15 @@
         </div>
 
         <div class="new-playlist-form">
-            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-light);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-light);" data-translate="podcast.create_new_playlist">
                 Create New Playlist
             </h3>
-            <label class="form-label">Playlist Name</label>
-            <input type="text" id="newPlaylistName" class="form-input-modal" placeholder="My Playlist">
-            <label class="form-label">Description (Optional)</label>
-            <input type="text" id="newPlaylistDesc" class="form-input-modal" placeholder="Add a description">
+            <label class="form-label" data-translate="podcast.playlist_name">Playlist Name</label>
+            <input type="text" id="newPlaylistName" class="form-input-modal" data-translate-placeholder="podcast.my_playlist" placeholder="My Playlist">
+            <label class="form-label" data-translate="podcast.description_optional">Description (Optional)</label>
+            <input type="text" id="newPlaylistDesc" class="form-input-modal" data-translate-placeholder="podcast.add_description" placeholder="Add a description">
             <button class="btn-create-playlist" onclick="createPlaylist()">
-                <i class="fas fa-plus-circle"></i> Create Playlist
+                <i class="fas fa-plus-circle"></i> <span data-translate="podcast.create_playlist_btn">Create Playlist</span>
             </button>
         </div>
     </div>
