@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Arab Podcast{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .auth-card {
+        background: var(--bg-light);
+        padding: 3rem;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px var(--shadow-light);
+        max-width: 500px;
+        width: 100%;
+    }
+
+    body.dark-theme .auth-card {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 10px 40px var(--shadow-dark);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    body.dark-theme .auth-header h1 {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .auth-header p {
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .auth-header p {
+        color: var(--text-secondary-dark);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .form-group label {
+        color: var(--text-dark);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        font-size: 1rem;
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+        transition: all 0.3s ease;
+    }
+
+    body.dark-theme .form-input {
+        background: var(--primary-dark-theme);
+        border-color: var(--border-dark);
+        color: var(--text-dark);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+    }
+
+    body.dark-theme .form-input:focus {
+        border-color: var(--accent-gold);
+        box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .form-input::placeholder {
+        color: var(--text-secondary-dark);
+    }
+
+    .password-input-wrapper {
+        position: relative;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: var(--text-secondary-light);
+        transition: all 0.3s ease;
+    }
+
+    body.dark-theme .password-toggle {
+        color: var(--text-secondary-dark);
+    }
+
+    .password-toggle:hover {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .password-toggle:hover {
+        color: var(--accent-gold);
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 1.2rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
+    }
+
+    body.dark-theme .btn-submit {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    body.dark-theme .btn-submit:hover {
+        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-light);
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .auth-footer {
+        border-top-color: var(--border-dark);
+        color: var(--text-secondary-dark);
+    }
+
+    .auth-footer a {
+        color: var(--primary-light);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-theme .auth-footer a {
+        color: var(--accent-gold);
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .form-error {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+
+    .form-input.error {
+        border-color: #ef4444;
+    }
+
+    .form-input.error:focus {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .auth-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="container">
+        <div class="auth-card" style="margin: 0 auto;">
+            <div class="auth-header">
+                <h1>Create Account</h1>
+                <p>Join the podcast community today</p>
+            </div>
+
+            <form action="{{ url_for('register') }}" method="post" id="registerForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-input"
+                           placeholder="Choose a unique username" required minlength="3" maxlength="50">
+                    <div class="form-error" id="username-error">Username must be at least 3 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-input"
+                           placeholder="your.email@example.com" required>
+                    <div class="form-error" id="email-error">Please enter a valid email</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="form-input"
+                           placeholder="Your full name" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" name="password" class="form-input"
+                               placeholder="Create a strong password" required minlength="6">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('password')"></i>
+                    </div>
+                    <div class="form-error" id="password-error">Password must be at least 6 characters</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-input"
+                               placeholder="Re-enter your password" required minlength="6">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('confirm_password')"></i>
+                    </div>
+                    <div class="form-error" id="confirm-error">Passwords do not match</div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="{{ url_for('login') }}">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const icon = field.nextElementSibling;
+
+        if (field.type === 'password') {
+            field.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            field.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+
+    // Form validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        let isValid = true;
+
+        // Username validation
+        const username = document.getElementById('username');
+        const usernameError = document.getElementById('username-error');
+        if (username.value.length < 3) {
+            username.classList.add('error');
+            usernameError.style.display = 'block';
+            isValid = false;
+        } else {
+            username.classList.remove('error');
+            usernameError.style.display = 'none';
+        }
+
+        // Email validation
+        const email = document.getElementById('email');
+        const emailError = document.getElementById('email-error');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.value)) {
+            email.classList.add('error');
+            emailError.style.display = 'block';
+            isValid = false;
+        } else {
+            email.classList.remove('error');
+            emailError.style.display = 'none';
+        }
+
+        // Password validation
+        const password = document.getElementById('password');
+        const passwordError = document.getElementById('password-error');
+        if (password.value.length < 6) {
+            password.classList.add('error');
+            passwordError.style.display = 'block';
+            isValid = false;
+        } else {
+            password.classList.remove('error');
+            passwordError.style.display = 'none';
+        }
+
+        // Confirm password validation
+        const confirmPassword = document.getElementById('confirm_password');
+        const confirmError = document.getElementById('confirm-error');
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.classList.add('error');
+            confirmError.style.display = 'block';
+            isValid = false;
+        } else {
+            confirmPassword.classList.remove('error');
+            confirmError.style.display = 'none';
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+
+    // Real-time validation
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        const password = document.getElementById('password');
+        const confirmError = document.getElementById('confirm-error');
+
+        if (this.value !== password.value) {
+            this.classList.add('error');
+            confirmError.style.display = 'block';
+        } else {
+            this.classList.remove('error');
+            confirmError.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

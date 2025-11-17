@@ -1,0 +1,585 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user_profile.username }} - Arab Podcast{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-banner {
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        padding: 4rem 0 8rem;
+        margin-bottom: -4rem;
+        position: relative;
+    }
+
+    body.dark-theme .profile-banner {
+        background: linear-gradient(135deg, var(--secondary-dark-theme), #3D3D3D);
+    }
+
+    .profile-header {
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-avatar-large {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 6px solid white;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        margin-bottom: 1.5rem;
+    }
+
+    body.dark-theme .profile-avatar-large {
+        border-color: var(--secondary-dark-theme);
+    }
+
+    .profile-info {
+        background: var(--bg-light);
+        padding: 6rem 3rem 3rem;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px var(--shadow-light);
+        margin-top: -5rem;
+        text-align: center;
+    }
+
+    body.dark-theme .profile-info {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 10px 40px var(--shadow-dark);
+    }
+
+    .profile-name {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-username {
+        color: var(--text-secondary-light);
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    body.dark-theme .profile-username {
+        color: var(--text-secondary-dark);
+    }
+
+    .profile-bio {
+        color: var(--text-secondary-light);
+        line-height: 1.6;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+
+    body.dark-theme .profile-bio {
+        color: var(--text-secondary-dark);
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-bottom: 2rem;
+        padding: 2rem;
+        background: var(--bg-secondary-light);
+        border-radius: 16px;
+    }
+
+    body.dark-theme .profile-stats {
+        background: var(--primary-dark-theme);
+    }
+
+    .stat-box {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    body.dark-theme .stat-value {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        color: var(--text-secondary-light);
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    body.dark-theme .stat-label {
+        color: var(--text-secondary-dark);
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-subscribe {
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-subscribe.subscribed {
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+        border: 2px solid var(--border-light);
+    }
+
+    body.dark-theme .btn-subscribe.subscribed {
+        background: var(--primary-dark-theme);
+        color: var(--text-dark);
+        border-color: var(--border-dark);
+    }
+
+    .btn-subscribe.not-subscribed {
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+
+    body.dark-theme .btn-subscribe.not-subscribed {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-subscribe:hover {
+        transform: translateY(-2px);
+    }
+
+    .profile-tabs {
+        display: flex;
+        gap: 1rem;
+        margin: 3rem 0 2rem;
+        border-bottom: 2px solid var(--border-light);
+        overflow-x: auto;
+    }
+
+    body.dark-theme .profile-tabs {
+        border-bottom-color: var(--border-dark);
+    }
+
+    .tab-btn {
+        padding: 1rem 2rem;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-secondary-light);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+    }
+
+    body.dark-theme .tab-btn {
+        color: var(--text-secondary-dark);
+    }
+
+    .tab-btn:hover {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .tab-btn:hover {
+        color: var(--accent-gold);
+    }
+
+    .tab-btn.active {
+        color: var(--primary-light);
+        border-bottom-color: var(--primary-light);
+    }
+
+    body.dark-theme .tab-btn.active {
+        color: var(--accent-gold);
+        border-bottom-color: var(--accent-gold);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .podcast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .podcast-card {
+        background: var(--bg-light);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px var(--shadow-light);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    body.dark-theme .podcast-card {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .podcast-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px var(--shadow-light);
+    }
+
+    body.dark-theme .podcast-card:hover {
+        box-shadow: 0 12px 40px var(--shadow-dark);
+    }
+
+    .podcast-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+    }
+
+    .podcast-info {
+        padding: 1.5rem;
+    }
+
+    .podcast-category {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+    }
+
+    body.dark-theme .podcast-category {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .podcast-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .podcast-stats {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .podcast-stats {
+        color: var(--text-secondary-dark);
+    }
+
+    .podcast-stats span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-secondary-light);
+        border-radius: 16px;
+    }
+
+    body.dark-theme .empty-state {
+        background: var(--secondary-dark-theme);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--text-secondary-light);
+        margin-bottom: 1.5rem;
+    }
+
+    body.dark-theme .empty-state i {
+        color: var(--text-secondary-dark);
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .empty-state p {
+        color: var(--text-secondary-dark);
+    }
+
+    .playlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .playlist-card {
+        background: var(--bg-light);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px var(--shadow-light);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    body.dark-theme .playlist-card {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .playlist-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .playlist-icon {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+    }
+
+    body.dark-theme .playlist-icon {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .playlist-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .playlist-count {
+        color: var(--text-secondary-light);
+        font-size: 0.85rem;
+    }
+
+    body.dark-theme .playlist-count {
+        color: var(--text-secondary-dark);
+    }
+
+    @media (max-width: 768px) {
+        .profile-banner {
+            padding: 3rem 0 6rem;
+        }
+
+        .profile-info {
+            padding: 5rem 2rem 2rem;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+        }
+
+        .profile-stats {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .podcast-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-banner"></div>
+
+<div class="container">
+    <div class="profile-header">
+        <div class="profile-info">
+            <img src="{{ url_for('static', filename='images/' + user_profile.profile_image) }}"
+                 alt="{{ user_profile.username }}" class="profile-avatar-large"
+                 onerror="this.src='https://ui-avatars.com/api/?name={{ user_profile.username }}&size=150&background=FF6B35&color=fff'">
+
+            <h1 class="profile-name">{{ user_profile.full_name or user_profile.username }}</h1>
+            <p class="profile-username">@{{ user_profile.username }}</p>
+
+            {% if user_profile.bio %}
+            <p class="profile-bio">{{ user_profile.bio }}</p>
+            {% endif %}
+
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <div class="stat-value">{{ podcasts|length }}</div>
+                    <div class="stat-label">Podcasts</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ subscriber_count }}</div>
+                    <div class="stat-label">Subscribers</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">{{ playlists|length }}</div>
+                    <div class="stat-label">Playlists</div>
+                </div>
+            </div>
+
+            {% if user and user.id != user_profile.id %}
+            <div class="profile-actions">
+                <button class="btn-subscribe {% if is_subscribed %}subscribed{% else %}not-subscribed{% endif %}"
+                        onclick="toggleSubscribe({{ user_profile.id }})">
+                    <i class="fas {% if is_subscribed %}fa-check{% else %}fa-plus{% endif %}"></i>
+                    <span id="subscribe-text">{% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}</span>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="profile-tabs">
+        <button class="tab-btn active" onclick="switchTab('podcasts')">
+            <i class="fas fa-podcast"></i> Podcasts ({{ podcasts|length }})
+        </button>
+        <button class="tab-btn" onclick="switchTab('playlists')">
+            <i class="fas fa-list"></i> Playlists ({{ playlists|length }})
+        </button>
+    </div>
+
+    <!-- Podcasts Tab -->
+    <div class="tab-content active" id="podcasts-content">
+        {% if podcasts %}
+        <div class="podcast-grid">
+            {% for podcast in podcasts %}
+            <a href="{{ url_for('podcast_detail', podcast_id=podcast.id) }}" class="podcast-card">
+                <img src="{{ url_for('static', filename='covers/' + podcast.cover_image) }}"
+                     alt="{{ podcast.title }}" class="podcast-cover"
+                     onerror="this.src='https://via.placeholder.com/400x400/FF6B35/ffffff?text={{ podcast.title[0] }}'">
+                <div class="podcast-info">
+                    {% if podcast.category_name %}
+                    <span class="podcast-category">{{ podcast.category_name }}</span>
+                    {% endif %}
+                    <h3 class="podcast-title">{{ podcast.title }}</h3>
+                    <div class="podcast-stats">
+                        <span><i class="fas fa-play-circle"></i> {{ podcast.plays }}</span>
+                        <span><i class="fas fa-heart"></i> {{ podcast.favorites_count }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-podcast"></i>
+            <h3>No Podcasts Yet</h3>
+            <p>This user hasn't uploaded any podcasts</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Playlists Tab -->
+    <div class="tab-content" id="playlists-content">
+        {% if playlists %}
+        <div class="playlist-grid">
+            {% for playlist in playlists %}
+            <div class="playlist-card">
+                <div class="playlist-icon">
+                    <i class="fas fa-list-ul"></i>
+                </div>
+                <h3 class="playlist-name">{{ playlist.name }}</h3>
+                <p class="playlist-count">{{ playlist.podcast_count }} podcasts</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-list"></i>
+            <h3>No Playlists</h3>
+            <p>This user hasn't created any playlists yet</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        document.getElementById(tabName + '-content').classList.add('active');
+        event.target.closest('.tab-btn').classList.add('active');
+    }
+
+    async function toggleSubscribe(creatorId) {
+        try {
+            const response = await fetch(`/api/subscribe/${creatorId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                const btn = document.querySelector('.btn-subscribe');
+                const text = document.getElementById('subscribe-text');
+                const icon = btn.querySelector('i');
+
+                if (data.is_subscribed) {
+                    btn.classList.remove('not-subscribed');
+                    btn.classList.add('subscribed');
+                    text.textContent = 'Subscribed';
+                    icon.classList.remove('fa-plus');
+                    icon.classList.add('fa-check');
+                } else {
+                    btn.classList.remove('subscribed');
+                    btn.classList.add('not-subscribed');
+                    text.textContent = 'Subscribe';
+                    icon.classList.remove('fa-check');
+                    icon.classList.add('fa-plus');
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script>
+{% endblock %}

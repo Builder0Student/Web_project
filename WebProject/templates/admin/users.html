@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin - Arab Podcast{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+        min-height: calc(100vh - 150px);
+    }
+
+    .admin-sidebar {
+        background: var(--bg-light);
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px var(--shadow-light);
+        height: fit-content;
+        position: sticky;
+        top: 100px;
+    }
+
+    body.dark-theme .admin-sidebar {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .admin-sidebar-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    body.dark-theme .admin-sidebar-title {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .admin-nav {
+        list-style: none;
+    }
+
+    .admin-nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--text-light);
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+    body.dark-theme .admin-nav a {
+        color: var(--text-dark);
+    }
+
+    .admin-nav a:hover {
+        background: var(--bg-secondary-light);
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .admin-nav a:hover {
+        background: var(--primary-dark-theme);
+        color: var(--accent-gold);
+    }
+
+    .admin-nav a.active {
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+    }
+
+    body.dark-theme .admin-nav a.active {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .admin-main {
+        background: var(--bg-light);
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px var(--shadow-light);
+    }
+
+    body.dark-theme .admin-main {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .admin-header {
+        margin-bottom: 3rem;
+    }
+
+    .admin-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    body.dark-theme .admin-header h1 {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .admin-header p {
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .admin-header p {
+        color: var(--text-secondary-dark);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead {
+        background: var(--bg-secondary-light);
+    }
+
+    body.dark-theme .data-table thead {
+        background: var(--primary-dark-theme);
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .data-table th {
+        color: var(--text-dark);
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .data-table td {
+        border-bottom-color: var(--border-dark);
+        color: var(--text-secondary-dark);
+    }
+
+    .data-table tbody tr:hover {
+        background: var(--bg-secondary-light);
+    }
+
+    body.dark-theme .data-table tbody tr:hover {
+        background: var(--primary-dark-theme);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-admin {
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+    }
+
+    body.dark-theme .badge-admin {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .badge-user {
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+    }
+
+    body.dark-theme .badge-user {
+        background: var(--primary-dark-theme);
+        color: var(--text-dark);
+    }
+
+    @media (max-width: 1024px) {
+        .admin-container {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-sidebar {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .admin-main {
+            padding: 2rem 1.5rem;
+        }
+
+        .data-table {
+            font-size: 0.85rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.8rem 0.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <h2 class="admin-sidebar-title">
+                <i class="fas fa-cog"></i> Admin Panel
+            </h2>
+            <ul class="admin-nav">
+                <li>
+                    <a href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_users') }}" class="active">
+                        <i class="fas fa-users"></i> Users
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_podcasts') }}">
+                        <i class="fas fa-podcast"></i> Podcasts
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_categories') }}">
+                        <i class="fas fa-tags"></i> Categories
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('index') }}">
+                        <i class="fas fa-arrow-left"></i> Back to Site
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <h1>Manage Users</h1>
+                <p>View and manage all registered users</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_item in users %}
+                    <tr>
+                        <td>{{ user_item.id }}</td>
+                        <td>
+                            <a href="{{ url_for('profile', username=user_item.username) }}"
+                               style="color: inherit; text-decoration: none; font-weight: 600;">
+                                {{ user_item.username }}
+                            </a>
+                        </td>
+                        <td>{{ user_item.email }}</td>
+                        <td>{{ user_item.full_name or '-' }}</td>
+                        <td>
+                            {% if user_item.is_admin %}
+                            <span class="badge badge-admin">Admin</span>
+                            {% else %}
+                            <span class="badge badge-user">User</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user_item.created_at }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
+{% endblock %}

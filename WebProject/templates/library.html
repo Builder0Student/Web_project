@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+
+{% block title %}My Library - Arab Podcast{% endblock %}
+
+{% block extra_css %}
+<style>
+    .library-header {
+        text-align: center;
+        padding: 3rem 0;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        border-radius: 24px;
+        margin-bottom: 3rem;
+        color: white;
+    }
+
+    body.dark-theme .library-header {
+        background: linear-gradient(135deg, var(--secondary-dark-theme), #3D3D3D);
+        border: 2px solid var(--border-dark);
+    }
+
+    .library-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .library-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        border-bottom: 2px solid var(--border-light);
+        overflow-x: auto;
+    }
+
+    body.dark-theme .library-tabs {
+        border-bottom-color: var(--border-dark);
+    }
+
+    .tab-btn {
+        padding: 1rem 2rem;
+        background: none;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-secondary-light);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+    }
+
+    body.dark-theme .tab-btn {
+        color: var(--text-secondary-dark);
+    }
+
+    .tab-btn:hover {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .tab-btn:hover {
+        color: var(--accent-gold);
+    }
+
+    .tab-btn.active {
+        color: var(--primary-light);
+        border-bottom-color: var(--primary-light);
+    }
+
+    body.dark-theme .tab-btn.active {
+        color: var(--accent-gold);
+        border-bottom-color: var(--accent-gold);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    body.dark-theme .section-title {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .podcast-list {
+        display: grid;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .podcast-item {
+        display: flex;
+        gap: 1.5rem;
+        background: var(--bg-light);
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px var(--shadow-light);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    body.dark-theme .podcast-item {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .podcast-item:hover {
+        transform: translateX(10px);
+        box-shadow: 0 8px 30px var(--shadow-light);
+    }
+
+    body.dark-theme .podcast-item:hover {
+        box-shadow: 0 8px 30px var(--shadow-dark);
+    }
+
+    .podcast-cover-small {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    .podcast-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .podcast-category-small {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        border-radius: 15px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-bottom: 0.8rem;
+        width: fit-content;
+    }
+
+    body.dark-theme .podcast-category-small {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .podcast-title-small {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .podcast-author-small {
+        color: var(--text-secondary-light);
+        font-size: 0.95rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    body.dark-theme .podcast-author-small {
+        color: var(--text-secondary-dark);
+    }
+
+    .podcast-stats-small {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .podcast-stats-small {
+        color: var(--text-secondary-dark);
+    }
+
+    .podcast-stats-small span {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .playlist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .playlist-card {
+        background: var(--bg-light);
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px var(--shadow-light);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    body.dark-theme .playlist-card {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .playlist-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px var(--shadow-light);
+    }
+
+    body.dark-theme .playlist-card:hover {
+        box-shadow: 0 12px 40px var(--shadow-dark);
+    }
+
+    .playlist-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    body.dark-theme .playlist-icon {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .playlist-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .playlist-count {
+        text-align: center;
+        color: var(--text-secondary-light);
+        font-size: 0.9rem;
+    }
+
+    body.dark-theme .playlist-count {
+        color: var(--text-secondary-dark);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-secondary-light);
+        border-radius: 16px;
+    }
+
+    body.dark-theme .empty-state {
+        background: var(--secondary-dark-theme);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--text-secondary-light);
+        margin-bottom: 1.5rem;
+    }
+
+    body.dark-theme .empty-state i {
+        color: var(--text-secondary-dark);
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary-light);
+        margin-bottom: 2rem;
+    }
+
+    body.dark-theme .empty-state p {
+        color: var(--text-secondary-dark);
+    }
+
+    @media (max-width: 768px) {
+        .library-header h1 {
+            font-size: 2rem;
+        }
+
+        .library-tabs {
+            gap: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        .podcast-item {
+            flex-direction: column;
+        }
+
+        .podcast-cover-small {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1;
+        }
+
+        .playlist-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="library-header">
+        <h1><i class="fas fa-bookmark"></i> My Library</h1>
+        <p>Your personal podcast collection</p>
+    </div>
+
+    <div class="library-tabs">
+        <button class="tab-btn active" onclick="switchTab('favorites')">
+            <i class="fas fa-heart"></i> Favorites ({{ favorites|length }})
+        </button>
+        <button class="tab-btn" onclick="switchTab('history')">
+            <i class="fas fa-history"></i> History ({{ history|length }})
+        </button>
+        <button class="tab-btn" onclick="switchTab('playlists')">
+            <i class="fas fa-list"></i> Playlists ({{ playlists|length }})
+        </button>
+    </div>
+
+    <!-- Favorites Tab -->
+    <div class="tab-content active" id="favorites-content">
+        {% if favorites %}
+        <div class="podcast-list">
+            {% for podcast in favorites %}
+            <a href="{{ url_for('podcast_detail', podcast_id=podcast.id) }}" class="podcast-item">
+                <img src="{{ url_for('static', filename='covers/' + podcast.cover_image) }}"
+                     alt="{{ podcast.title }}" class="podcast-cover-small"
+                     onerror="this.src='https://via.placeholder.com/120x120/FF6B35/ffffff?text={{ podcast.title[0] }}'">
+                <div class="podcast-content">
+                    {% if podcast.category_name %}
+                    <span class="podcast-category-small">{{ podcast.category_name }}</span>
+                    {% endif %}
+                    <h3 class="podcast-title-small">{{ podcast.title }}</h3>
+                    <p class="podcast-author-small">
+                        <i class="fas fa-user-circle"></i>
+                        {{ podcast.username }}
+                    </p>
+                    <div class="podcast-stats-small">
+                        <span><i class="fas fa-play-circle"></i> {{ podcast.plays }} plays</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-heart-broken"></i>
+            <h3>No Favorites Yet</h3>
+            <p>Start exploring and save your favorite podcasts</p>
+            <a href="{{ url_for('browse') }}" class="btn btn-primary">
+                <i class="fas fa-compass"></i> Browse Podcasts
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- History Tab -->
+    <div class="tab-content" id="history-content">
+        {% if history %}
+        <div class="podcast-list">
+            {% for podcast in history %}
+            <a href="{{ url_for('podcast_detail', podcast_id=podcast.id) }}" class="podcast-item">
+                <img src="{{ url_for('static', filename='covers/' + podcast.cover_image) }}"
+                     alt="{{ podcast.title }}" class="podcast-cover-small"
+                     onerror="this.src='https://via.placeholder.com/120x120/FF6B35/ffffff?text={{ podcast.title[0] }}'">
+                <div class="podcast-content">
+                    {% if podcast.category_name %}
+                    <span class="podcast-category-small">{{ podcast.category_name }}</span>
+                    {% endif %}
+                    <h3 class="podcast-title-small">{{ podcast.title }}</h3>
+                    <p class="podcast-author-small">
+                        <i class="fas fa-user-circle"></i>
+                        {{ podcast.username }}
+                    </p>
+                    <div class="podcast-stats-small">
+                        <span><i class="fas fa-clock"></i> Recently listened</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-history"></i>
+            <h3>No Listening History</h3>
+            <p>Your recently played podcasts will appear here</p>
+            <a href="{{ url_for('browse') }}" class="btn btn-primary">
+                <i class="fas fa-compass"></i> Discover Podcasts
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Playlists Tab -->
+    <div class="tab-content" id="playlists-content">
+        {% if playlists %}
+        <div class="playlist-grid">
+            {% for playlist in playlists %}
+            <div class="playlist-card">
+                <div class="playlist-icon">
+                    <i class="fas fa-list-ul"></i>
+                </div>
+                <h3 class="playlist-name">{{ playlist.name }}</h3>
+                <p class="playlist-count">{{ playlist.podcast_count }} podcasts</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-list"></i>
+            <h3>No Playlists Yet</h3>
+            <p>Create playlists to organize your favorite podcasts</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-content').classList.add('active');
+        event.target.closest('.tab-btn').classList.add('active');
+    }
+</script>
+{% endblock %}

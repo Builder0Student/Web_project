@@ -1,0 +1,546 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Podcast - Arab Podcast{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+
+    .upload-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .upload-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    body.dark-theme .upload-header h1 {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .upload-header p {
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .upload-header p {
+        color: var(--text-secondary-dark);
+    }
+
+    .upload-card {
+        background: var(--bg-light);
+        padding: 3rem;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px var(--shadow-light);
+    }
+
+    body.dark-theme .upload-card {
+        background: var(--secondary-dark-theme);
+        box-shadow: 0 10px 40px var(--shadow-dark);
+    }
+
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .section-title {
+        color: var(--text-dark);
+    }
+
+    .section-title i {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .section-title i {
+        color: var(--accent-gold);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .form-group label {
+        color: var(--text-dark);
+    }
+
+    .form-input, .form-textarea, .form-select {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        font-size: 1rem;
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    body.dark-theme .form-input,
+    body.dark-theme .form-textarea,
+    body.dark-theme .form-select {
+        background: var(--primary-dark-theme);
+        border-color: var(--border-dark);
+        color: var(--text-dark);
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+    }
+
+    body.dark-theme .form-input:focus,
+    body.dark-theme .form-textarea:focus,
+    body.dark-theme .form-select:focus {
+        border-color: var(--accent-gold);
+        box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .file-upload {
+        border: 3px dashed var(--border-light);
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: var(--bg-secondary-light);
+    }
+
+    body.dark-theme .file-upload {
+        background: var(--primary-dark-theme);
+        border-color: var(--border-dark);
+    }
+
+    .file-upload:hover {
+        border-color: var(--primary-light);
+        background: rgba(255, 107, 53, 0.05);
+    }
+
+    body.dark-theme .file-upload:hover {
+        border-color: var(--accent-gold);
+        background: rgba(255, 215, 0, 0.05);
+    }
+
+    .file-upload.dragover {
+        border-color: var(--primary-light);
+        background: rgba(255, 107, 53, 0.1);
+    }
+
+    body.dark-theme .file-upload.dragover {
+        border-color: var(--accent-gold);
+        background: rgba(255, 215, 0, 0.1);
+    }
+
+    .file-upload-icon {
+        font-size: 3rem;
+        color: var(--primary-light);
+        margin-bottom: 1rem;
+    }
+
+    body.dark-theme .file-upload-icon {
+        color: var(--accent-gold);
+    }
+
+    .file-upload-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .file-upload-text {
+        color: var(--text-dark);
+    }
+
+    .file-upload-subtext {
+        color: var(--text-secondary-light);
+        font-size: 0.9rem;
+    }
+
+    body.dark-theme .file-upload-subtext {
+        color: var(--text-secondary-dark);
+    }
+
+    .file-info {
+        display: none;
+        margin-top: 1rem;
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 165, 0, 0.1));
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-light);
+    }
+
+    body.dark-theme .file-info {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 193, 7, 0.1));
+        border-left-color: var(--accent-gold);
+    }
+
+    .file-info.show {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .file-info i {
+        font-size: 2rem;
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .file-info i {
+        color: var(--accent-gold);
+    }
+
+    .file-info-content {
+        flex: 1;
+    }
+
+    .file-name {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+
+    .file-size {
+        color: var(--text-secondary-light);
+        font-size: 0.85rem;
+    }
+
+    body.dark-theme .file-size {
+        color: var(--text-secondary-dark);
+    }
+
+    .btn-remove-file {
+        background: none;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-remove-file:hover {
+        transform: scale(1.2);
+    }
+
+    .form-hint {
+        font-size: 0.85rem;
+        color: var(--text-secondary-light);
+        margin-top: 0.5rem;
+    }
+
+    body.dark-theme .form-hint {
+        color: var(--text-secondary-dark);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 3rem;
+    }
+
+    .btn-submit, .btn-cancel {
+        flex: 1;
+        padding: 1.2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
+    }
+
+    body.dark-theme .btn-submit {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    body.dark-theme .btn-submit:hover {
+        box-shadow: 0 8px 30px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-cancel {
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+        border: 2px solid var(--border-light);
+    }
+
+    body.dark-theme .btn-cancel {
+        background: var(--primary-dark-theme);
+        color: var(--text-dark);
+        border-color: var(--border-dark);
+    }
+
+    .btn-cancel:hover {
+        background: var(--border-light);
+    }
+
+    body.dark-theme .btn-cancel:hover {
+        background: var(--border-dark);
+    }
+
+    @media (max-width: 768px) {
+        .upload-card {
+            padding: 2rem 1.5rem;
+        }
+
+        .upload-header h1 {
+            font-size: 2rem;
+        }
+
+        .file-upload {
+            padding: 2rem 1rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="upload-container">
+        <div class="upload-header">
+            <h1><i class="fas fa-cloud-upload-alt"></i> Upload Your Podcast</h1>
+            <p>Share your voice with the world</p>
+        </div>
+
+        <div class="upload-card">
+            <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Basic Information
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Podcast Title *</label>
+                        <input type="text" id="title" name="title" class="form-input"
+                               placeholder="Enter an engaging title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-textarea"
+                                  placeholder="Describe your podcast..."></textarea>
+                        <div class="form-hint">Give listeners a compelling overview of your content</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category_id">Category *</label>
+                        <select id="category_id" name="category_id" class="form-select" required>
+                            <option value="">Select a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Audio File Upload -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-microphone"></i>
+                        Audio File
+                    </div>
+
+                    <input type="file" id="audio_file" name="audio_file" accept="audio/*"
+                           style="display: none;" required onchange="handleAudioFile(this)">
+
+                    <div class="file-upload" onclick="document.getElementById('audio_file').click()"
+                         ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'audio')">
+                        <div class="file-upload-icon">
+                            <i class="fas fa-file-audio"></i>
+                        </div>
+                        <div class="file-upload-text">Click to upload or drag and drop</div>
+                        <div class="file-upload-subtext">MP3, WAV, M4A, OGG (Max 500MB)</div>
+                    </div>
+
+                    <div class="file-info" id="audioInfo">
+                        <i class="fas fa-file-audio"></i>
+                        <div class="file-info-content">
+                            <div class="file-name" id="audioFileName"></div>
+                            <div class="file-size" id="audioFileSize"></div>
+                        </div>
+                        <button type="button" class="btn-remove-file" onclick="removeFile('audio')">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cover Image Upload -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-image"></i>
+                        Cover Image
+                    </div>
+
+                    <input type="file" id="cover_image" name="cover_image" accept="image/*"
+                           style="display: none;" onchange="handleCoverImage(this)">
+
+                    <div class="file-upload" onclick="document.getElementById('cover_image').click()"
+                         ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'cover')">
+                        <div class="file-upload-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="file-upload-text">Click to upload or drag and drop</div>
+                        <div class="file-upload-subtext">PNG, JPG, JPEG, WEBP (Recommended: 1:1 ratio)</div>
+                    </div>
+
+                    <div class="file-info" id="coverInfo">
+                        <i class="fas fa-image"></i>
+                        <div class="file-info-content">
+                            <div class="file-name" id="coverFileName"></div>
+                            <div class="file-size" id="coverFileSize"></div>
+                        </div>
+                        <button type="button" class="btn-remove-file" onclick="removeFile('cover')">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="window.history.back()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-upload"></i> Upload Podcast
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleAudioFile(input) {
+        const file = input.files[0];
+        if (file) {
+            displayFileInfo('audio', file);
+        }
+    }
+
+    function handleCoverImage(input) {
+        const file = input.files[0];
+        if (file) {
+            displayFileInfo('cover', file);
+        }
+    }
+
+    function displayFileInfo(type, file) {
+        const info = document.getElementById(type === 'audio' ? 'audioInfo' : 'coverInfo');
+        const fileName = document.getElementById(type === 'audio' ? 'audioFileName' : 'coverFileName');
+        const fileSize = document.getElementById(type === 'audio' ? 'audioFileSize' : 'coverFileSize');
+
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        info.classList.add('show');
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function removeFile(type) {
+        const input = document.getElementById(type === 'audio' ? 'audio_file' : 'cover_image');
+        const info = document.getElementById(type === 'audio' ? 'audioInfo' : 'coverInfo');
+
+        input.value = '';
+        info.classList.remove('show');
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('dragover');
+    }
+
+    function handleDrop(e, type) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('dragover');
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            const input = document.getElementById(type === 'audio' ? 'audio_file' : 'cover_image');
+            input.files = files;
+
+            if (type === 'audio') {
+                handleAudioFile(input);
+            } else {
+                handleCoverImage(input);
+            }
+        }
+    }
+
+    // Form validation
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const audioFile = document.getElementById('audio_file').files[0];
+
+        if (!audioFile) {
+            e.preventDefault();
+            alert('Please upload an audio file');
+            return false;
+        }
+
+        // Show loading state
+        const submitBtn = this.querySelector('.btn-submit');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        submitBtn.disabled = true;
+    });
+</script>
+{% endblock %}
