@@ -73,6 +73,246 @@
         transform: translateY(-2px);
     }
 
+    .btn-playlist {
+        background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+        color: white;
+        border: 2px solid transparent;
+    }
+
+    body.dark-theme .btn-playlist {
+        background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    }
+
+    .btn-playlist:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    /* Playlist Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .modal-content {
+        background: var(--bg-light);
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+
+    body.dark-theme .modal-content {
+        background: var(--secondary-dark-theme);
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    body.dark-theme .modal-title {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-secondary-light);
+        transition: all 0.3s ease;
+    }
+
+    body.dark-theme .modal-close {
+        color: var(--text-secondary-dark);
+    }
+
+    .modal-close:hover {
+        color: var(--primary-light);
+        transform: scale(1.2);
+    }
+
+    body.dark-theme .modal-close:hover {
+        color: var(--accent-gold);
+    }
+
+    .playlist-list {
+        margin-bottom: 1.5rem;
+    }
+
+    .playlist-item {
+        padding: 1rem;
+        background: var(--bg-secondary-light);
+        border-radius: 12px;
+        margin-bottom: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    body.dark-theme .playlist-item {
+        background: var(--primary-dark-theme);
+    }
+
+    .playlist-item:hover {
+        background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 165, 0, 0.1));
+        transform: translateX(5px);
+    }
+
+    body.dark-theme .playlist-item:hover {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 193, 7, 0.1));
+    }
+
+    .playlist-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    body.dark-theme .playlist-icon {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .playlist-info {
+        flex: 1;
+    }
+
+    .playlist-name {
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+
+    .playlist-count {
+        font-size: 0.85rem;
+        color: var(--text-secondary-light);
+    }
+
+    body.dark-theme .playlist-count {
+        color: var(--text-secondary-dark);
+    }
+
+    .new-playlist-form {
+        border-top: 2px solid var(--border-light);
+        padding-top: 1.5rem;
+    }
+
+    body.dark-theme .new-playlist-form {
+        border-top-color: var(--border-dark);
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: var(--text-light);
+    }
+
+    body.dark-theme .form-label {
+        color: var(--text-dark);
+    }
+
+    .form-input-modal {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid var(--border-light);
+        border-radius: 8px;
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    body.dark-theme .form-input-modal {
+        background: var(--primary-dark-theme);
+        border-color: var(--border-dark);
+        color: var(--text-dark);
+    }
+
+    .form-input-modal:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+
+    body.dark-theme .form-input-modal:focus {
+        border-color: var(--accent-gold);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+
+    .btn-create-playlist {
+        width: 100%;
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-create-playlist:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
     .podcast-stats-detail {
         background: var(--bg-secondary-light);
         padding: 1.5rem;
@@ -555,6 +795,13 @@
                 </button>
             </div>
 
+            {% if user %}
+            <button class="btn-action btn-playlist" onclick="openPlaylistModal()" style="margin-top: 1rem; width: 100%;">
+                <i class="fas fa-plus"></i>
+                <span>Save to Playlist</span>
+            </button>
+            {% endif %}
+
             <div class="podcast-stats-detail">
                 <div class="stat-item">
                     <div class="stat-value"><i class="fas fa-play-circle"></i> {{ podcast.plays }}</div>
@@ -691,6 +938,37 @@
     {% endif %}
 </div>
 
+<!-- Playlist Modal -->
+{% if user %}
+<div class="modal" id="playlistModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Save to Playlist</h2>
+            <button class="modal-close" onclick="closePlaylistModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="playlist-list" id="playlistList">
+            <!-- Playlists will be loaded here -->
+        </div>
+
+        <div class="new-playlist-form">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-light);">
+                Create New Playlist
+            </h3>
+            <label class="form-label">Playlist Name</label>
+            <input type="text" id="newPlaylistName" class="form-input-modal" placeholder="My Playlist">
+            <label class="form-label">Description (Optional)</label>
+            <input type="text" id="newPlaylistDesc" class="form-input-modal" placeholder="Add a description">
+            <button class="btn-create-playlist" onclick="createPlaylist()">
+                <i class="fas fa-plus-circle"></i> Create Playlist
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <script>
     const audio = document.getElementById('audioPlayer');
     const playBtn = document.getElementById('playBtn');
@@ -812,6 +1090,114 @@
             }
         } catch (error) {
             console.error('Error:', error);
+        }
+    }
+
+    // Playlist Functions
+    async function openPlaylistModal() {
+        const modal = document.getElementById('playlistModal');
+        modal.classList.add('active');
+        await loadPlaylists();
+    }
+
+    function closePlaylistModal() {
+        const modal = document.getElementById('playlistModal');
+        modal.classList.remove('active');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('playlistModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePlaylistModal();
+        }
+    });
+
+    async function loadPlaylists() {
+        try {
+            const response = await fetch('/api/playlists');
+            const data = await response.json();
+
+            const playlistList = document.getElementById('playlistList');
+
+            if (data.playlists && data.playlists.length > 0) {
+                playlistList.innerHTML = data.playlists.map(playlist => `
+                    <div class="playlist-item" onclick="addToPlaylist(${playlist.id}, '${playlist.name}')">
+                        <div class="playlist-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="playlist-info">
+                            <div class="playlist-name">${playlist.name}</div>
+                            <div class="playlist-count">${playlist.item_count || 0} podcasts</div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                playlistList.innerHTML = `
+                    <p style="text-align: center; color: var(--text-secondary-light); padding: 2rem;">
+                        No playlists yet. Create one below!
+                    </p>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading playlists:', error);
+        }
+    }
+
+    async function createPlaylist() {
+        const name = document.getElementById('newPlaylistName').value.trim();
+        const description = document.getElementById('newPlaylistDesc').value.trim();
+
+        if (!name) {
+            alert('Please enter a playlist name');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/playlists/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, description })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                document.getElementById('newPlaylistName').value = '';
+                document.getElementById('newPlaylistDesc').value = '';
+                await loadPlaylists();
+                alert('Playlist created successfully!');
+            } else {
+                alert(data.message || 'Failed to create playlist');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to create playlist');
+        }
+    }
+
+    async function addToPlaylist(playlistId, playlistName) {
+        try {
+            const response = await fetch('/api/playlists/' + playlistId + '/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ podcast_id: {{ podcast.id }} })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Added to "' + playlistName + '"!');
+                closePlaylistModal();
+            } else {
+                alert(data.message || 'Failed to add to playlist');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to add to playlist');
         }
     }
 </script>

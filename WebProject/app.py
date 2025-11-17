@@ -600,6 +600,110 @@ def toggle_subscribe(creator_id):
     return jsonify({'success': True, 'is_subscribed': is_subscribed})
 
 
+# Playlist API Routes
+@app.route('/api/playlists', methods=['GET'])
+@login_required
+def api_get_playlists():
+    conn = get_db()
+
+    playlists = conn.execute('''
+        SELECT p.*, COUNT(pi.id) as item_count
+        FROM playlists p
+        LEFT JOIN playlist_items pi ON p.id = pi.playlist_id
+        WHERE p.user_id = ?
+        GROUP BY p.id
+        ORDER BY p.created_at DESC
+    ''', (session['user_id'],)).fetchall()
+
+    conn.close()
+
+    return jsonify({
+        'success': True,
+        'playlists': [dict(playlist) for playlist in playlists]
+    })
+
+
+@app.route('/api/playlists/create', methods=['POST'])
+@login_required
+def api_create_playlist():
+    data = request.get_json()
+    name = data.get('name', '').strip()
+    description = data.get('description', '').strip()
+
+    if not name:
+        return jsonify({'success': False, 'message': 'Playlist name is required'}), 400
+
+    conn = get_db()
+
+    try:
+        conn.execute('''
+            INSERT INTO playlists (name, description, user_id)
+            VALUES (?, ?, ?)
+        ''', (name, description, session['user_id']))
+        conn.commit()
+
+        playlist_id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
+
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'message': 'Playlist created successfully',
+            'playlist_id': playlist_id
+        })
+
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/playlists/<int:playlist_id>/add', methods=['POST'])
+@login_required
+def api_add_to_playlist(playlist_id):
+    data = request.get_json()
+    podcast_id = data.get('podcast_id')
+
+    if not podcast_id:
+        return jsonify({'success': False, 'message': 'Podcast ID is required'}), 400
+
+    conn = get_db()
+
+    # Verify playlist belongs to user
+    playlist = conn.execute('''
+        SELECT id FROM playlists WHERE id = ? AND user_id = ?
+    ''', (playlist_id, session['user_id'])).fetchone()
+
+    if not playlist:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Playlist not found'}), 404
+
+    # Check if podcast already in playlist
+    existing = conn.execute('''
+        SELECT id FROM playlist_items WHERE playlist_id = ? AND podcast_id = ?
+    ''', (playlist_id, podcast_id)).fetchone()
+
+    if existing:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Podcast already in playlist'}), 400
+
+    try:
+        conn.execute('''
+            INSERT INTO playlist_items (playlist_id, podcast_id)
+            VALUES (?, ?)
+        ''', (playlist_id, podcast_id))
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'message': 'Podcast added to playlist successfully'
+        })
+
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 # Admin Routes
 @app.route('/admin')
 @admin_required
