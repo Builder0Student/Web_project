@@ -327,6 +327,40 @@
         background: var(--border-dark);
     }
 
+    .error-message {
+        display: none;
+        background: linear-gradient(135deg, #fee2e2, #fecaca);
+        color: #991b1b;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #dc2626;
+        font-weight: 600;
+        animation: shake 0.5s ease;
+    }
+
+    body.dark-theme .error-message {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.2));
+        color: #fca5a5;
+        border-left-color: #dc2626;
+    }
+
+    .error-message.show {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .error-message i {
+        font-size: 1.5rem;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+
     @media (max-width: 768px) {
         .upload-card {
             padding: 2rem 1.5rem;
@@ -356,6 +390,11 @@
         </div>
 
         <div class="upload-card">
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
             <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" id="uploadForm">
                 <!-- Basic Information -->
                 <div class="form-section">
@@ -527,13 +566,75 @@
         }
     }
 
+    // Show error message
+    function showError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+
+        errorText.textContent = message;
+        errorMessage.classList.add('show');
+
+        // Scroll to error
+        errorMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Hide after 5 seconds
+        setTimeout(() => {
+            errorMessage.classList.remove('show');
+        }, 5000);
+    }
+
     // Form validation
     document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const title = document.getElementById('title').value.trim();
+        const category = document.getElementById('category_id').value;
         const audioFile = document.getElementById('audio_file').files[0];
 
+        // Validate title
+        if (!title) {
+            e.preventDefault();
+            showError('Please enter a podcast title');
+            return false;
+        }
+
+        if (title.length < 3) {
+            e.preventDefault();
+            showError('Title must be at least 3 characters long');
+            return false;
+        }
+
+        // Validate category
+        if (!category) {
+            e.preventDefault();
+            showError('Please select a category');
+            return false;
+        }
+
+        // Validate audio file
         if (!audioFile) {
             e.preventDefault();
-            alert('Please upload an audio file');
+            showError('Please upload an audio file (MP3, WAV, M4A, or OGG)');
+            return false;
+        }
+
+        // Validate file size
+        const maxSize = 500 * 1024 * 1024; // 500MB
+        if (audioFile.size > maxSize) {
+            e.preventDefault();
+            showError('Audio file is too large. Maximum size is 500MB');
+            return false;
+        }
+
+        if (audioFile.size === 0) {
+            e.preventDefault();
+            showError('Audio file is empty. Please select a valid audio file');
+            return false;
+        }
+
+        // Validate file type
+        const allowedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/m4a', 'audio/x-m4a', 'audio/ogg'];
+        if (!allowedTypes.includes(audioFile.type) && !audioFile.name.match(/\.(mp3|wav|m4a|ogg)$/i)) {
+            e.preventDefault();
+            showError('Invalid audio file format. Please upload MP3, WAV, M4A, or OGG');
             return false;
         }
 

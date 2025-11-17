@@ -99,9 +99,27 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            line-height: 1;
+        }
+
+        .logo i {
+            background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
         }
 
         body.dark-theme .logo {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        body.dark-theme .logo i {
             background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -589,12 +607,12 @@
             </div>
 
             <div class="nav-actions">
-                <button class="lang-toggle" onclick="toggleLanguage()">
+                <button class="lang-toggle" onclick="toggleLanguage()" title="Toggle Right-to-Left Layout">
                     <i class="fas fa-globe"></i>
-                    <span id="lang-text">AR</span>
+                    <span id="lang-text">RTL</span>
                 </button>
 
-                <button class="theme-toggle" onclick="toggleTheme()">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Theme">
                     <i class="fas fa-moon" id="theme-icon"></i>
                 </button>
 
@@ -684,7 +702,7 @@
                     </a>
                     <a href="https://x.com/Ahmed0Abbad?t=ir65yoRaX24GcnOh9J-y6A&s=09" target="_blank" rel="noopener noreferrer" title="X (Twitter)"
                        style="font-size: 1.5rem; color: var(--primary-light); transition: all 0.3s ease;">
-                        <i class="fab fa-x-twitter"></i>
+                        <i class="fa-brands fa-x-twitter"></i>
                     </a>
                 </div>
             </div>
@@ -695,22 +713,22 @@
     </footer>
 
     <script>
-        // Language Toggle
+        // Language Toggle (RTL/LTR Layout)
         function toggleLanguage() {
             const htmlRoot = document.getElementById('html-root');
             const langText = document.getElementById('lang-text');
-            const currentLang = htmlRoot.getAttribute('lang');
+            const currentDir = htmlRoot.getAttribute('dir');
 
-            if (currentLang === 'en') {
+            if (currentDir === 'ltr' || !currentDir) {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
-                langText.textContent = 'EN';
-                localStorage.setItem('language', 'ar');
+                langText.textContent = 'LTR';
+                localStorage.setItem('layout', 'rtl');
             } else {
                 htmlRoot.setAttribute('lang', 'en');
                 htmlRoot.setAttribute('dir', 'ltr');
-                langText.textContent = 'AR';
-                localStorage.setItem('language', 'en');
+                langText.textContent = 'RTL';
+                localStorage.setItem('layout', 'ltr');
             }
         }
 
@@ -742,15 +760,15 @@
                 themeIcon.classList.add('fa-sun');
             }
 
-            // Load language
-            const savedLang = localStorage.getItem('language');
+            // Load layout preference
+            const savedLayout = localStorage.getItem('layout');
             const htmlRoot = document.getElementById('html-root');
             const langText = document.getElementById('lang-text');
 
-            if (savedLang === 'ar') {
+            if (savedLayout === 'rtl') {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
-                langText.textContent = 'EN';
+                langText.textContent = 'LTR';
             }
         });
 
