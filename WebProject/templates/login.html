@@ -81,6 +81,10 @@
         transition: all 0.3s ease;
     }
 
+    .password-input-wrapper .form-input {
+        padding-right: 3.5rem;
+    }
+
     body.dark-theme .form-input {
         background: var(--primary-dark-theme);
         border-color: var(--border-dark);
@@ -108,6 +112,7 @@
 
     .password-input-wrapper {
         position: relative;
+        display: block;
     }
 
     .password-toggle {
@@ -118,6 +123,8 @@
         cursor: pointer;
         color: var(--text-secondary-light);
         transition: all 0.3s ease;
+        z-index: 10;
+        pointer-events: auto;
     }
 
     body.dark-theme .password-toggle {

@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
+import re
 from datetime import datetime
 from database import get_db, init_db, seed_initial_data
 
@@ -122,13 +123,29 @@ def register():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
         password = request.form.get('password')
-        full_name = request.form.get('full_name')
+        full_name = request.form.get('full_name', '').strip()
 
+        # Validate required fields
         if not all([username, email, password]):
-            flash('All fields are required', 'error')
+            flash('All required fields must be filled', 'error')
+            return redirect(url_for('register'))
+
+        # Validate username format (only letters, numbers, and underscores)
+        if not re.match(r'^[a-zA-Z0-9_]+$', username):
+            flash('Username can only contain letters, numbers, and underscores', 'error')
+            return redirect(url_for('register'))
+
+        # Validate username length
+        if len(username) < 3 or len(username) > 50:
+            flash('Username must be between 3 and 50 characters', 'error')
+            return redirect(url_for('register'))
+
+        # Validate password length
+        if len(password) < 6:
+            flash('Password must be at least 6 characters', 'error')
             return redirect(url_for('register'))
 
         conn = get_db()
@@ -314,43 +331,88 @@ def podcast_detail(podcast_id):
 @login_required
 def upload():
     if request.method == 'POST':
-        title = request.form.get('title')
-        description = request.form.get('description')
-        category_id = request.form.get('category_id')
-        audio_file = request.files.get('audio_file')
-        cover_image = request.files.get('cover_image')
+        try:
+            title = request.form.get('title', '').strip()
+            description = request.form.get('description', '').strip()
+            category_id = request.form.get('category_id')
+            audio_file = request.files.get('audio_file')
+            cover_image = request.files.get('cover_image')
 
-        if not all([title, audio_file]):
-            flash('Title and audio file are required', 'error')
+            # Validate title
+            if not title:
+                flash('Podcast title is required', 'error')
+                return redirect(url_for('upload'))
+
+            if len(title) < 3:
+                flash('Title must be at least 3 characters long', 'error')
+                return redirect(url_for('upload'))
+
+            # Validate category
+            if not category_id:
+                flash('Please select a category', 'error')
+                return redirect(url_for('upload'))
+
+            # Validate audio file
+            if not audio_file or audio_file.filename == '':
+                flash('Audio file is required', 'error')
+                return redirect(url_for('upload'))
+
+            if not allowed_file(audio_file.filename, 'audio'):
+                flash('Invalid audio file format. Allowed formats: MP3, WAV, M4A, OGG', 'error')
+                return redirect(url_for('upload'))
+
+            # Check audio file size (max 500MB)
+            audio_file.seek(0, os.SEEK_END)
+            audio_size = audio_file.tell()
+            audio_file.seek(0)
+
+            if audio_size > app.config['MAX_CONTENT_LENGTH']:
+                flash('Audio file is too large. Maximum size is 500MB', 'error')
+                return redirect(url_for('upload'))
+
+            if audio_size == 0:
+                flash('Audio file is empty', 'error')
+                return redirect(url_for('upload'))
+
+            # Save audio file
+            audio_filename = secure_filename(f"{datetime.now().timestamp()}_{audio_file.filename}")
+            audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
+            audio_file.save(audio_path)
+
+            # Save cover image if provided
+            cover_filename = 'default-cover.jpg'
+            if cover_image and cover_image.filename != '':
+                if not allowed_file(cover_image.filename, 'image'):
+                    flash('Invalid cover image format. Allowed formats: PNG, JPG, JPEG, WEBP', 'error')
+                    # Remove uploaded audio file
+                    if os.path.exists(audio_path):
+                        os.remove(audio_path)
+                    return redirect(url_for('upload'))
+
+                cover_filename = secure_filename(f"{datetime.now().timestamp()}_{cover_image.filename}")
+                cover_path = os.path.join(app.config['COVER_FOLDER'], cover_filename)
+                cover_image.save(cover_path)
+
+            # Insert into database
+            conn = get_db()
+            conn.execute('''
+                INSERT INTO podcasts (title, description, audio_file, cover_image, category_id, user_id)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (title, description, audio_filename, cover_filename, category_id, session['user_id']))
+            conn.commit()
+            conn.close()
+
+            flash('Podcast uploaded successfully!', 'success')
+            return redirect(url_for('profile', username=session['username']))
+
+        except Exception as e:
+            flash(f'Upload failed: {str(e)}', 'error')
+            # Clean up any uploaded files
+            if 'audio_path' in locals() and os.path.exists(audio_path):
+                os.remove(audio_path)
+            if 'cover_path' in locals() and os.path.exists(cover_path):
+                os.remove(cover_path)
             return redirect(url_for('upload'))
-
-        if not allowed_file(audio_file.filename, 'audio'):
-            flash('Invalid audio file format', 'error')
-            return redirect(url_for('upload'))
-
-        # Save audio file
-        audio_filename = secure_filename(f"{datetime.now().timestamp()}_{audio_file.filename}")
-        audio_path = os.path.join(app.config['UPLOAD_FOLDER'], audio_filename)
-        audio_file.save(audio_path)
-
-        # Save cover image if provided
-        cover_filename = 'default-cover.jpg'
-        if cover_image and allowed_file(cover_image.filename, 'image'):
-            cover_filename = secure_filename(f"{datetime.now().timestamp()}_{cover_image.filename}")
-            cover_path = os.path.join(app.config['COVER_FOLDER'], cover_filename)
-            cover_image.save(cover_path)
-
-        # Insert into database
-        conn = get_db()
-        conn.execute('''
-            INSERT INTO podcasts (title, description, audio_file, cover_image, category_id, user_id)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (title, description, audio_filename, cover_filename, category_id, session['user_id']))
-        conn.commit()
-        conn.close()
-
-        flash('Podcast uploaded successfully!', 'success')
-        return redirect(url_for('profile', username=session['username']))
 
     conn = get_db()
     categories = conn.execute('SELECT * FROM categories ORDER BY name').fetchall()
@@ -629,12 +691,131 @@ def admin_podcasts():
 @admin_required
 def admin_delete_podcast(podcast_id):
     conn = get_db()
-    conn.execute('DELETE FROM podcasts WHERE id = ?', (podcast_id,))
+
+    # Get podcast info before deleting
+    podcast = conn.execute('SELECT * FROM podcasts WHERE id = ?', (podcast_id,)).fetchone()
+
+    if podcast:
+        # Delete podcast from database
+        conn.execute('DELETE FROM podcasts WHERE id = ?', (podcast_id,))
+        conn.commit()
+
+        # Delete associated files
+        try:
+            audio_path = os.path.join(app.config['UPLOAD_FOLDER'], podcast['audio_file'])
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
+
+            if podcast['cover_image'] != 'default-cover.jpg':
+                cover_path = os.path.join(app.config['COVER_FOLDER'], podcast['cover_image'])
+                if os.path.exists(cover_path):
+                    os.remove(cover_path)
+        except Exception as e:
+            print(f"Error deleting files: {e}")
+
+    conn.close()
+    flash('Podcast deleted successfully', 'success')
+    return redirect(url_for('admin_podcasts'))
+
+
+@app.route('/admin/user/toggle-admin/<int:user_id>', methods=['POST'])
+@admin_required
+def admin_toggle_admin(user_id):
+    # Prevent removing admin from yourself
+    if user_id == session['user_id']:
+        flash('You cannot change your own admin status', 'error')
+        return redirect(url_for('admin_users'))
+
+    conn = get_db()
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+
+    if user:
+        new_admin_status = 0 if user['is_admin'] else 1
+        conn.execute('UPDATE users SET is_admin = ? WHERE id = ?', (new_admin_status, user_id))
+        conn.commit()
+
+        status = 'Admin' if new_admin_status else 'User'
+        flash(f'User {user["username"]} is now a {status}', 'success')
+
+    conn.close()
+    return redirect(url_for('admin_users'))
+
+
+@app.route('/admin/user/delete/<int:user_id>', methods=['POST'])
+@admin_required
+def admin_delete_user(user_id):
+    # Prevent deleting yourself
+    if user_id == session['user_id']:
+        flash('You cannot delete your own account', 'error')
+        return redirect(url_for('admin_users'))
+
+    conn = get_db()
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+
+    if user:
+        # Delete user's podcasts first
+        podcasts = conn.execute('SELECT * FROM podcasts WHERE user_id = ?', (user_id,)).fetchall()
+        for podcast in podcasts:
+            try:
+                audio_path = os.path.join(app.config['UPLOAD_FOLDER'], podcast['audio_file'])
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+
+                if podcast['cover_image'] != 'default-cover.jpg':
+                    cover_path = os.path.join(app.config['COVER_FOLDER'], podcast['cover_image'])
+                    if os.path.exists(cover_path):
+                        os.remove(cover_path)
+            except Exception as e:
+                print(f"Error deleting podcast files: {e}")
+
+        # Delete user and all associated data (cascade should handle this)
+        conn.execute('DELETE FROM podcasts WHERE user_id = ?', (user_id,))
+        conn.execute('DELETE FROM comments WHERE user_id = ?', (user_id,))
+        conn.execute('DELETE FROM favorites WHERE user_id = ?', (user_id,))
+        conn.execute('DELETE FROM playlists WHERE user_id = ?', (user_id,))
+        conn.execute('DELETE FROM subscriptions WHERE subscriber_id = ? OR creator_id = ?', (user_id, user_id))
+        conn.execute('DELETE FROM listening_history WHERE user_id = ?', (user_id,))
+        conn.execute('DELETE FROM users WHERE id = ?', (user_id,))
+        conn.commit()
+
+        flash(f'User {user["username"]} and all their data have been deleted', 'success')
+
+    conn.close()
+    return redirect(url_for('admin_users'))
+
+
+@app.route('/admin/user/edit/<int:user_id>', methods=['POST'])
+@admin_required
+def admin_edit_user(user_id):
+    new_username = request.form.get('username', '').strip()
+
+    if not new_username:
+        flash('Username cannot be empty', 'error')
+        return redirect(url_for('admin_users'))
+
+    # Validate username format
+    if not re.match(r'^[a-zA-Z0-9_]+$', new_username):
+        flash('Username can only contain letters, numbers, and underscores', 'error')
+        return redirect(url_for('admin_users'))
+
+    conn = get_db()
+
+    # Check if username already exists
+    existing = conn.execute('SELECT id FROM users WHERE username = ? AND id != ?',
+                           (new_username, user_id)).fetchone()
+
+    if existing:
+        flash('Username already exists', 'error')
+        conn.close()
+        return redirect(url_for('admin_users'))
+
+    # Update username
+    conn.execute('UPDATE users SET username = ? WHERE id = ?', (new_username, user_id))
     conn.commit()
     conn.close()
 
-    flash('Podcast deleted successfully', 'success')
-    return redirect(url_for('admin_podcasts'))
+    flash('Username updated successfully', 'success')
+    return redirect(url_for('admin_users'))
 
 
 if __name__ == '__main__':

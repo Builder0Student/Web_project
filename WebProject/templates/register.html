@@ -81,6 +81,10 @@
         transition: all 0.3s ease;
     }
 
+    .password-input-wrapper .form-input {
+        padding-right: 3.5rem;
+    }
+
     body.dark-theme .form-input {
         background: var(--primary-dark-theme);
         border-color: var(--border-dark);
@@ -108,6 +112,7 @@
 
     .password-input-wrapper {
         position: relative;
+        display: block;
     }
 
     .password-toggle {
@@ -118,6 +123,8 @@
         cursor: pointer;
         color: var(--text-secondary-light);
         transition: all 0.3s ease;
+        z-index: 10;
+        pointer-events: auto;
     }
 
     body.dark-theme .password-toggle {
@@ -229,8 +236,8 @@
                 <div class="form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="username" class="form-input"
-                           placeholder="Choose a unique username" required minlength="3" maxlength="50">
-                    <div class="form-error" id="username-error">Username must be at least 3 characters</div>
+                           placeholder="Choose a unique username" required minlength="3" maxlength="50" pattern="[a-zA-Z0-9_]+">
+                    <div class="form-error" id="username-error">Username must be at least 3 characters and contain only letters, numbers, and underscores</div>
                 </div>
 
                 <div class="form-group">
@@ -301,7 +308,8 @@
         // Username validation
         const username = document.getElementById('username');
         const usernameError = document.getElementById('username-error');
-        if (username.value.length < 3) {
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        if (username.value.length < 3 || !usernameRegex.test(username.value)) {
             username.classList.add('error');
             usernameError.style.display = 'block';
             isValid = false;
