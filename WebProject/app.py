@@ -6,6 +6,8 @@ import os
 import re
 from datetime import datetime
 from database import get_db, init_db, seed_initial_data
+from PIL import Image
+import io
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'change-this-to-random-secret-key-in-production'
@@ -35,6 +37,58 @@ def allowed_file(filename, file_type='audio'):
     elif file_type == 'image':
         return ext in app.config['ALLOWED_IMAGE_EXTENSIONS']
     return False
+
+
+def resize_image_to_square(image_file, output_path, size=800):
+    """
+    Resize and crop image to a perfect square (1:1 ratio).
+    Args:
+        image_file: FileStorage object from Flask request.files
+        output_path: Path where the resized image will be saved
+        size: Target width and height in pixels (default 800x800)
+    """
+    try:
+        # Open the image
+        img = Image.open(image_file)
+
+        # Convert RGBA to RGB if necessary
+        if img.mode in ('RGBA', 'LA', 'P'):
+            background = Image.new('RGB', img.size, (255, 255, 255))
+            if img.mode == 'P':
+                img = img.convert('RGBA')
+            background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+            img = background
+
+        # Get current dimensions
+        width, height = img.size
+
+        # Calculate the crop box to make it square (centered crop)
+        if width > height:
+            # Landscape - crop sides
+            left = (width - height) // 2
+            top = 0
+            right = left + height
+            bottom = height
+        else:
+            # Portrait or square - crop top/bottom
+            left = 0
+            top = (height - width) // 2
+            right = width
+            bottom = top + width
+
+        # Crop to square
+        img_cropped = img.crop((left, top, right, bottom))
+
+        # Resize to target size with high-quality resampling
+        img_resized = img_cropped.resize((size, size), Image.Resampling.LANCZOS)
+
+        # Save with optimization
+        img_resized.save(output_path, quality=90, optimize=True)
+
+        return True
+    except Exception as e:
+        print(f"Error resizing image: {e}")
+        return False
 
 
 def login_required(f):
@@ -404,9 +458,19 @@ def upload():
                         os.remove(media_path)
                     return redirect(url_for('upload'))
 
+                # Generate filename and save with auto-resize to 1:1 ratio
                 cover_filename = secure_filename(f"{datetime.now().timestamp()}_{cover_image.filename}")
+                # Change extension to jpg for consistency
+                cover_filename = os.path.splitext(cover_filename)[0] + '.jpg'
                 cover_path = os.path.join(app.config['COVER_FOLDER'], cover_filename)
-                cover_image.save(cover_path)
+
+                # Resize image to perfect square (800x800)
+                if not resize_image_to_square(cover_image, cover_path, size=800):
+                    flash('Failed to process cover image', 'error')
+                    # Remove uploaded media file
+                    if os.path.exists(media_path):
+                        os.remove(media_path)
+                    return redirect(url_for('upload'))
 
             # Insert into database
             conn = get_db()

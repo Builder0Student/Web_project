@@ -328,27 +328,27 @@
             <ul class="admin-nav">
                 <li>
                     <a href="{{ url_for('admin_dashboard') }}" class="active">
-                        <i class="fas fa-chart-line"></i> Dashboard
+                        <i class="fas fa-chart-line"></i> <span data-translate="admin.dashboard">Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_users') }}">
-                        <i class="fas fa-users"></i> Users
+                        <i class="fas fa-users"></i> <span data-translate="admin.users">Users</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_podcasts') }}">
-                        <i class="fas fa-podcast"></i> Podcasts
+                        <i class="fas fa-podcast"></i> <span data-translate="admin.podcasts">Podcasts</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_categories') }}">
-                        <i class="fas fa-tags"></i> Categories
+                        <i class="fas fa-tags"></i> <span data-translate="admin.categories">Categories</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('index') }}">
-                        <i class="fas fa-arrow-left"></i> Back to Site
+                        <i class="fas fa-arrow-left"></i> <span data-translate="admin.back_to_site">Back to Site</span>
                     </a>
                 </li>
             </ul>
@@ -357,8 +357,8 @@
         <!-- Main Content -->
         <main class="admin-main">
             <div class="admin-header">
-                <h1>Dashboard Overview</h1>
-                <p>Welcome back, {{ user.username }}! Here's what's happening with your platform</p>
+                <h1 data-translate="admin.overview">Dashboard Overview</h1>
+                <p><span data-translate="admin.welcome">Welcome back</span>, {{ user.username }}! <span data-translate="admin.happening">Here's what's happening with your platform</span></p>
             </div>
 
             <!-- Statistics -->
@@ -368,7 +368,7 @@
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="stat-value">{{ stats.total_users }}</div>
-                    <div class="stat-label">Total Users</div>
+                    <div class="stat-label" data-translate="admin.total_users">Total Users</div>
                 </div>
 
                 <div class="stat-card">
@@ -376,7 +376,7 @@
                         <i class="fas fa-podcast"></i>
                     </div>
                     <div class="stat-value">{{ stats.total_podcasts }}</div>
-                    <div class="stat-label">Total Podcasts</div>
+                    <div class="stat-label" data-translate="admin.total_podcasts">Total Podcasts</div>
                 </div>
 
                 <div class="stat-card">
@@ -384,7 +384,7 @@
                         <i class="fas fa-play-circle"></i>
                     </div>
                     <div class="stat-value">{{ stats.total_plays }}</div>
-                    <div class="stat-label">Total Plays</div>
+                    <div class="stat-label" data-translate="admin.total_plays">Total Plays</div>
                 </div>
 
                 <div class="stat-card">
@@ -392,22 +392,22 @@
                         <i class="fas fa-comments"></i>
                     </div>
                     <div class="stat-value">{{ stats.total_comments }}</div>
-                    <div class="stat-label">Total Comments</div>
+                    <div class="stat-label" data-translate="admin.total_comments">Total Comments</div>
                 </div>
             </div>
 
             <!-- Recent Podcasts -->
             <section>
                 <h2 class="section-title">
-                    <i class="fas fa-podcast"></i> Recent Podcasts
+                    <i class="fas fa-podcast"></i> <span data-translate="admin.recent_podcasts">Recent Podcasts</span>
                 </h2>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Title</th>
-                            <th>Creator</th>
-                            <th>Plays</th>
-                            <th>Date</th>
+                            <th data-translate="admin.title">Title</th>
+                            <th data-translate="admin.creator">Creator</th>
+                            <th data-translate="admin.plays">Plays</th>
+                            <th data-translate="admin.date">Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -431,15 +431,15 @@
             <!-- Recent Users -->
             <section>
                 <h2 class="section-title">
-                    <i class="fas fa-users"></i> Recent Users
+                    <i class="fas fa-users"></i> <span data-translate="admin.recent_users">Recent Users</span>
                 </h2>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Joined</th>
+                            <th data-translate="admin.username">Username</th>
+                            <th data-translate="admin.email">Email</th>
+                            <th data-translate="admin.role">Role</th>
+                            <th data-translate="admin.joined">Joined</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -449,9 +449,9 @@
                             <td>{{ user_item.email }}</td>
                             <td>
                                 {% if user_item.is_admin %}
-                                <span class="badge badge-admin">Admin</span>
+                                <span class="badge badge-admin" data-translate="admin.admin_badge">Admin</span>
                                 {% else %}
-                                <span class="badge badge-user">User</span>
+                                <span class="badge badge-user" data-translate="admin.user_badge">User</span>
                                 {% endif %}
                             </td>
                             <td>{{ user_item.created_at }}</td>

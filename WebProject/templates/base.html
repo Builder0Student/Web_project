@@ -739,8 +739,58 @@
             // Apply translations
             applyTranslations(newLang);
 
+            // Translate flash messages
+            translateFlashMessages(newLang);
+
             // Dispatch language change event for custom validation messages
             window.dispatchEvent(new Event('languageChanged'));
+        }
+
+        // Translate flash messages
+        function translateFlashMessages(lang) {
+            // Mapping from English flash messages to translation keys
+            const flashMessageMap = {
+                'All fields are required': 'flash.all_fields_required',
+                'Invalid credentials': 'flash.invalid_credentials',
+                'Welcome back!': 'flash.welcome_back',
+                'Logged out successfully': 'flash.logged_out',
+                'All required fields must be filled': 'flash.all_required_filled',
+                'Username can only contain letters, numbers, and underscores': 'flash.username_format',
+                'Username must be between 3 and 50 characters': 'flash.username_length',
+                'Password must be at least 6 characters': 'flash.password_length',
+                'Username or email already exists': 'flash.username_email_exists',
+                'Registration successful! Please login': 'flash.registration_successful',
+                'Please login to access this page': 'flash.please_login',
+                'Content title is required': 'flash.content_title_required',
+                'Title must be at least 3 characters long': 'flash.title_min_length',
+                'Please select a category': 'flash.please_select_category',
+                'Media file is required': 'flash.media_file_required',
+                'Invalid video file format. Allowed formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM': 'flash.invalid_video_format',
+                'Invalid audio file format. Allowed formats: MP3, WAV, M4A, OGG': 'flash.invalid_audio_format',
+                'Media file is too large. Maximum size is 500MB': 'flash.media_file_too_large',
+                'Media file is empty': 'flash.media_file_empty',
+                'Invalid cover image format. Allowed formats: PNG, JPG, JPEG, WEBP': 'flash.invalid_cover_format',
+                'Failed to process cover image': 'flash.cover_process_failed',
+                'Content uploaded successfully!': 'flash.content_uploaded',
+                'User not found': 'flash.user_not_found'
+            };
+
+            // Translate all alert messages
+            document.querySelectorAll('.alert span').forEach(span => {
+                const originalText = span.textContent.trim();
+
+                // Check if message starts with "Upload failed:" (dynamic error message)
+                if (originalText.startsWith('Upload failed:')) {
+                    const translatedPrefix = translate('flash.upload_failed', lang);
+                    span.textContent = originalText.replace('Upload failed:', translatedPrefix + ':');
+                    return;
+                }
+
+                // Look for exact match in message map
+                if (flashMessageMap[originalText]) {
+                    span.textContent = translate(flashMessageMap[originalText], lang);
+                }
+            });
         }
 
         // Theme Toggle
@@ -788,6 +838,9 @@
 
             // Apply translations on page load
             applyTranslations(savedLang);
+
+            // Translate flash messages on page load
+            translateFlashMessages(savedLang);
         });
 
         // Auto-dismiss flash messages

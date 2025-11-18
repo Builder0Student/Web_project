@@ -246,6 +246,45 @@ const translations = {
         "admin.plays": "Plays",
         "admin.date": "Date",
         "admin.uncategorized": "Uncategorized",
+
+        // Profile
+        "profile.podcasts": "Podcasts",
+        "profile.subscribers": "Subscribers",
+        "profile.playlists": "Playlists",
+        "profile.subscribe": "Subscribe",
+        "profile.subscribed": "Subscribed",
+        "profile.no_podcasts": "No Podcasts Yet",
+        "profile.no_podcasts_desc": "This user hasn't uploaded any podcasts",
+        "profile.no_playlists": "No Playlists",
+        "profile.no_playlists_desc": "This user hasn't created any playlists yet",
+
+        // Flash Messages - Login/Register
+        "flash.all_fields_required": "All fields are required",
+        "flash.invalid_credentials": "Invalid credentials",
+        "flash.welcome_back": "Welcome back!",
+        "flash.logged_out": "Logged out successfully",
+        "flash.all_required_filled": "All required fields must be filled",
+        "flash.username_format": "Username can only contain letters, numbers, and underscores",
+        "flash.username_length": "Username must be between 3 and 50 characters",
+        "flash.password_length": "Password must be at least 6 characters",
+        "flash.username_email_exists": "Username or email already exists",
+        "flash.registration_successful": "Registration successful! Please login",
+        "flash.please_login": "Please login to access this page",
+
+        // Flash Messages - Upload
+        "flash.content_title_required": "Content title is required",
+        "flash.title_min_length": "Title must be at least 3 characters long",
+        "flash.please_select_category": "Please select a category",
+        "flash.media_file_required": "Media file is required",
+        "flash.invalid_video_format": "Invalid video file format. Allowed formats: MP4, AVI, MOV, WMV, FLV, MKV, WEBM",
+        "flash.invalid_audio_format": "Invalid audio file format. Allowed formats: MP3, WAV, M4A, OGG",
+        "flash.media_file_too_large": "Media file is too large. Maximum size is 500MB",
+        "flash.media_file_empty": "Media file is empty",
+        "flash.invalid_cover_format": "Invalid cover image format. Allowed formats: PNG, JPG, JPEG, WEBP",
+        "flash.cover_process_failed": "Failed to process cover image",
+        "flash.content_uploaded": "Content uploaded successfully!",
+        "flash.upload_failed": "Upload failed",
+        "flash.user_not_found": "User not found",
     },
 
     ar: {
@@ -488,6 +527,45 @@ const translations = {
         "admin.plays": "مرات التشغيل",
         "admin.date": "التاريخ",
         "admin.uncategorized": "غير مصنف",
+
+        // Profile
+        "profile.podcasts": "البودكاست",
+        "profile.subscribers": "المشتركون",
+        "profile.playlists": "قوائم التشغيل",
+        "profile.subscribe": "اشتراك",
+        "profile.subscribed": "مشترك",
+        "profile.no_podcasts": "لا توجد بودكاست",
+        "profile.no_podcasts_desc": "لم يقم هذا المستخدم بتحميل أي بودكاست",
+        "profile.no_playlists": "لا توجد قوائم تشغيل",
+        "profile.no_playlists_desc": "لم يقم هذا المستخدم بإنشاء أي قوائم تشغيل",
+
+        // Flash Messages - Login/Register
+        "flash.all_fields_required": "جميع الحقول مطلوبة",
+        "flash.invalid_credentials": "بيانات اعتماد غير صحيحة",
+        "flash.welcome_back": "مرحباً بعودتك!",
+        "flash.logged_out": "تم تسجيل الخروج بنجاح",
+        "flash.all_required_filled": "يجب ملء جميع الحقول المطلوبة",
+        "flash.username_format": "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام وشرطات سفلية فقط",
+        "flash.username_length": "يجب أن يكون اسم المستخدم بين 3 و 50 حرفاً",
+        "flash.password_length": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+        "flash.username_email_exists": "اسم المستخدم أو البريد الإلكتروني موجود بالفعل",
+        "flash.registration_successful": "تم التسجيل بنجاح! الرجاء تسجيل الدخول",
+        "flash.please_login": "الرجاء تسجيل الدخول للوصول إلى هذه الصفحة",
+
+        // Flash Messages - Upload
+        "flash.content_title_required": "عنوان المحتوى مطلوب",
+        "flash.title_min_length": "يجب أن يكون العنوان 3 أحرف على الأقل",
+        "flash.please_select_category": "الرجاء اختيار تصنيف",
+        "flash.media_file_required": "ملف الوسائط مطلوب",
+        "flash.invalid_video_format": "صيغة ملف فيديو غير صالحة. الصيغ المسموحة: MP4, AVI, MOV, WMV, FLV, MKV, WEBM",
+        "flash.invalid_audio_format": "صيغة ملف صوتي غير صالحة. الصيغ المسموحة: MP3, WAV, M4A, OGG",
+        "flash.media_file_too_large": "ملف الوسائط كبير جداً. الحد الأقصى هو 500 ميجابايت",
+        "flash.media_file_empty": "ملف الوسائط فارغ",
+        "flash.invalid_cover_format": "صيغة صورة الغلاف غير صالحة. الصيغ المسموحة: PNG, JPG, JPEG, WEBP",
+        "flash.cover_process_failed": "فشل في معالجة صورة الغلاف",
+        "flash.content_uploaded": "تم رفع المحتوى بنجاح!",
+        "flash.upload_failed": "فشل الرفع",
+        "flash.user_not_found": "المستخدم غير موجود",
     }
 };
 

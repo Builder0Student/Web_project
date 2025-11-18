@@ -447,15 +447,15 @@
             <div class="profile-stats">
                 <div class="stat-box">
                     <div class="stat-value">{{ podcasts|length }}</div>
-                    <div class="stat-label">Podcasts</div>
+                    <div class="stat-label" data-translate="profile.podcasts">Podcasts</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-value">{{ subscriber_count }}</div>
-                    <div class="stat-label">Subscribers</div>
+                    <div class="stat-label" data-translate="profile.subscribers">Subscribers</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-value">{{ playlists|length }}</div>
-                    <div class="stat-label">Playlists</div>
+                    <div class="stat-label" data-translate="profile.playlists">Playlists</div>
                 </div>
             </div>
 
@@ -464,7 +464,7 @@
                 <button class="btn-subscribe {% if is_subscribed %}subscribed{% else %}not-subscribed{% endif %}"
                         onclick="toggleSubscribe({{ user_profile.id }})">
                     <i class="fas {% if is_subscribed %}fa-check{% else %}fa-plus{% endif %}"></i>
-                    <span id="subscribe-text">{% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}</span>
+                    <span id="subscribe-text" data-translate="{% if is_subscribed %}profile.subscribed{% else %}profile.subscribe{% endif %}">{% if is_subscribed %}Subscribed{% else %}Subscribe{% endif %}</span>
                 </button>
             </div>
             {% endif %}
@@ -473,10 +473,10 @@
 
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="switchTab('podcasts')">
-            <i class="fas fa-podcast"></i> Podcasts ({{ podcasts|length }})
+            <i class="fas fa-podcast"></i> <span data-translate="profile.podcasts">Podcasts</span> ({{ podcasts|length }})
         </button>
         <button class="tab-btn" onclick="switchTab('playlists')">
-            <i class="fas fa-list"></i> Playlists ({{ playlists|length }})
+            <i class="fas fa-list"></i> <span data-translate="profile.playlists">Playlists</span> ({{ playlists|length }})
         </button>
     </div>
 
@@ -505,8 +505,8 @@
         {% else %}
         <div class="empty-state">
             <i class="fas fa-podcast"></i>
-            <h3>No Podcasts Yet</h3>
-            <p>This user hasn't uploaded any podcasts</p>
+            <h3 data-translate="profile.no_podcasts">No Podcasts Yet</h3>
+            <p data-translate="profile.no_podcasts_desc">This user hasn't uploaded any podcasts</p>
         </div>
         {% endif %}
     </div>
@@ -521,15 +521,15 @@
                     <i class="fas fa-list-ul"></i>
                 </div>
                 <h3 class="playlist-name">{{ playlist.name }}</h3>
-                <p class="playlist-count">{{ playlist.podcast_count }} podcasts</p>
+                <p class="playlist-count">{{ playlist.podcast_count }} <span data-translate="profile.podcasts">podcasts</span></p>
             </div>
             {% endfor %}
         </div>
         {% else %}
         <div class="empty-state">
             <i class="fas fa-list"></i>
-            <h3>No Playlists</h3>
-            <p>This user hasn't created any playlists yet</p>
+            <h3 data-translate="profile.no_playlists">No Playlists</h3>
+            <p data-translate="profile.no_playlists_desc">This user hasn't created any playlists yet</p>
         </div>
         {% endif %}
     </div>
@@ -562,17 +562,20 @@
                 const btn = document.querySelector('.btn-subscribe');
                 const text = document.getElementById('subscribe-text');
                 const icon = btn.querySelector('i');
+                const currentLang = localStorage.getItem('language') || 'en';
 
                 if (data.is_subscribed) {
                     btn.classList.remove('not-subscribed');
                     btn.classList.add('subscribed');
-                    text.textContent = 'Subscribed';
+                    text.textContent = translate('profile.subscribed', currentLang);
+                    text.setAttribute('data-translate', 'profile.subscribed');
                     icon.classList.remove('fa-plus');
                     icon.classList.add('fa-check');
                 } else {
                     btn.classList.remove('subscribed');
                     btn.classList.add('not-subscribed');
-                    text.textContent = 'Subscribe';
+                    text.textContent = translate('profile.subscribe', currentLang);
+                    text.setAttribute('data-translate', 'profile.subscribe');
                     icon.classList.remove('fa-check');
                     icon.classList.add('fa-plus');
                 }
