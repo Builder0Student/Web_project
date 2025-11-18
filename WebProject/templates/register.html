@@ -373,5 +373,66 @@
             confirmError.style.display = 'none';
         }
     });
+
+    // Custom validation messages for HTML5 validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+
+        function updateValidationMessages() {
+            const currentLang = localStorage.getItem('language') || 'en';
+
+            // Username
+            usernameInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+            usernameInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+
+            // Email
+            emailInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+            emailInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+
+            // Password
+            passwordInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+            passwordInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+
+            // Confirm Password
+            confirmPasswordInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+            confirmPasswordInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+        }
+
+        updateValidationMessages();
+
+        // Update on language change
+        window.addEventListener('languageChanged', updateValidationMessages);
+    });
 </script>
 {% endblock %}

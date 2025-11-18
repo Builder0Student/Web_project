@@ -738,6 +738,9 @@
 
             // Apply translations
             applyTranslations(newLang);
+
+            // Dispatch language change event for custom validation messages
+            window.dispatchEvent(new Event('languageChanged'));
         }
 
         // Theme Toggle

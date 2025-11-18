@@ -122,6 +122,7 @@ const translations = {
         "upload.uploading": "Uploading...",
 
         // Validation Messages
+        "validation.field_required": "Please fill out this field",
         "validation.title_required": "Please enter a podcast title",
         "validation.title_short": "Title must be at least 3 characters long",
         "validation.category_required": "Please select a category",
@@ -331,6 +332,7 @@ const translations = {
         "upload.uploading": "جاري الرفع...",
 
         // Validation Messages
+        "validation.field_required": "الرجاء ملء هذا الحقل",
         "validation.title_required": "الرجاء إدخال عنوان البودكاست",
         "validation.title_short": "يجب أن يكون العنوان 3 أحرف على الأقل",
         "validation.category_required": "الرجاء اختيار تصنيف",

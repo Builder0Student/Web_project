@@ -394,5 +394,42 @@
             icon.classList.add('fa-eye');
         }
     }
+
+    // Custom validation messages
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        function updateValidationMessages() {
+            const currentLang = localStorage.getItem('language') || 'en';
+
+            usernameInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+
+            usernameInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+
+            passwordInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+
+            passwordInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+        }
+
+        updateValidationMessages();
+
+        // Update on language change
+        window.addEventListener('languageChanged', updateValidationMessages);
+    });
 </script>
 {% endblock %}
