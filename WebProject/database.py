@@ -1,5 +1,5 @@
 import sqlite3
-from werkzeug.security import generate_password_hash
+import bcrypt
 from datetime import datetime
 
 DATABASE_NAME = 'arab_podcast.db'
@@ -191,8 +191,8 @@ def seed_initial_data():
     # Check if admin exists
     cursor.execute('SELECT id FROM users WHERE username = ?', ('admin',))
     if not cursor.fetchone():
-        # Create admin user
-        admin_password = generate_password_hash('admin123')
+        # Create admin user with bcrypt
+        admin_password = bcrypt.hashpw('admin123'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         cursor.execute('''
             INSERT INTO users (username, email, password, full_name, is_admin, is_creator)
             VALUES (?, ?, ?, ?, ?, ?)

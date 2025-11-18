@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
-from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
 import os
 import re
+import bcrypt
 from datetime import datetime
 from database import get_db, init_db, seed_initial_data
 from PIL import Image
@@ -218,8 +218,8 @@ def register():
             conn.close()
             return redirect(url_for('register'))
 
-        # Create user
-        hashed_password = generate_password_hash(password)
+        # Create user with bcrypt
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         conn.execute('''
             INSERT INTO users (username, email, password, full_name)
             VALUES (?, ?, ?, ?)
@@ -251,7 +251,7 @@ def login():
                             (username, username)).fetchone()
         conn.close()
 
-        if user and check_password_hash(user['password'], password):
+        if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
             session['user_id'] = user['id']
             session['username'] = user['username']
             session['is_admin'] = user['is_admin']
