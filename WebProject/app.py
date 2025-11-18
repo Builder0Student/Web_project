@@ -337,14 +337,20 @@ def podcast_detail(podcast_id):
         conn.close()
         return redirect(url_for('index'))
 
-    # Get comments
-    comments = conn.execute('''
-        SELECT c.*, u.username, u.profile_image
+    # Get comments with likes info
+    user_id = session.get('user_id')
+    comments_query = '''
+        SELECT c.*, u.username, u.profile_image,
+               (SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes_count,
+               {} as is_liked_by_user
         FROM comments c
         LEFT JOIN users u ON c.user_id = u.id
         WHERE c.podcast_id = ?
-        ORDER BY c.created_at DESC
-    ''', (podcast_id,)).fetchall()
+        ORDER BY c.is_pinned DESC, c.created_at DESC
+    '''.format(
+        f'(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id AND user_id = {user_id}) > 0' if user_id else '0'
+    )
+    comments = conn.execute(comments_query, (podcast_id,)).fetchall()
 
     # Get related podcasts
     related = conn.execute('''
@@ -685,6 +691,109 @@ def add_comment(podcast_id):
     conn.close()
 
     return jsonify({'success': True, 'message': 'Comment added successfully'})
+
+
+@app.route('/api/comment/<int:comment_id>/like', methods=['POST'])
+@login_required
+def toggle_comment_like(comment_id):
+    conn = get_db()
+
+    existing = conn.execute('''
+        SELECT id FROM comment_likes WHERE comment_id = ? AND user_id = ?
+    ''', (comment_id, session['user_id'])).fetchone()
+
+    if existing:
+        # Unlike
+        conn.execute('DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?',
+                    (comment_id, session['user_id']))
+        is_liked = False
+    else:
+        # Like
+        conn.execute('INSERT INTO comment_likes (comment_id, user_id) VALUES (?, ?)',
+                    (comment_id, session['user_id']))
+        is_liked = True
+
+    # Get updated like count
+    likes_count = conn.execute('''
+        SELECT COUNT(*) as count FROM comment_likes WHERE comment_id = ?
+    ''', (comment_id,)).fetchone()['count']
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'success': True, 'is_liked': is_liked, 'likes_count': likes_count})
+
+
+@app.route('/api/comment/<int:comment_id>/pin', methods=['POST'])
+@login_required
+def toggle_pin_comment(comment_id):
+    conn = get_db()
+
+    # Get the comment and podcast details
+    comment = conn.execute('''
+        SELECT c.*, p.user_id as podcast_creator_id
+        FROM comments c
+        JOIN podcasts p ON c.podcast_id = p.id
+        WHERE c.id = ?
+    ''', (comment_id,)).fetchone()
+
+    if not comment:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Comment not found'}), 404
+
+    # Check if user is the podcast creator
+    if comment['podcast_creator_id'] != session['user_id']:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Only podcast creator can pin comments'}), 403
+
+    # Toggle pin status
+    new_pin_status = 0 if comment['is_pinned'] else 1
+
+    # If pinning, unpin all other comments on this podcast first
+    if new_pin_status == 1:
+        conn.execute('''
+            UPDATE comments SET is_pinned = 0
+            WHERE podcast_id = ? AND id != ?
+        ''', (comment['podcast_id'], comment_id))
+
+    # Update this comment's pin status
+    conn.execute('UPDATE comments SET is_pinned = ? WHERE id = ?',
+                (new_pin_status, comment_id))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({'success': True, 'is_pinned': bool(new_pin_status)})
+
+
+@app.route('/api/comment/<int:comment_id>', methods=['DELETE'])
+@login_required
+def delete_comment(comment_id):
+    conn = get_db()
+
+    # Get the comment and podcast details
+    comment = conn.execute('''
+        SELECT c.*, p.user_id as podcast_creator_id
+        FROM comments c
+        JOIN podcasts p ON c.podcast_id = p.id
+        WHERE c.id = ?
+    ''', (comment_id,)).fetchone()
+
+    if not comment:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Comment not found'}), 404
+
+    # Check if user is the comment author or podcast creator
+    if comment['user_id'] != session['user_id'] and comment['podcast_creator_id'] != session['user_id']:
+        conn.close()
+        return jsonify({'success': False, 'message': 'You can only delete your own comments or comments on your podcast'}), 403
+
+    # Delete the comment (cascade will delete associated likes)
+    conn.execute('DELETE FROM comments WHERE id = ?', (comment_id,))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'success': True, 'message': 'Comment deleted successfully'})
 
 
 @app.route('/api/subscribe/<int:creator_id>', methods=['POST'])

@@ -610,6 +610,38 @@
         margin-bottom: 2rem;
     }
 
+    .btn-post-comment {
+        padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+
+    body.dark-theme .btn-post-comment {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-post-comment:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    body.dark-theme .btn-post-comment:hover {
+        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+    }
+
     .comment-textarea {
         width: 100%;
         padding: 1rem 1.5rem;
@@ -687,6 +719,91 @@
 
     body.dark-theme .comment-time {
         color: var(--text-secondary-dark);
+    }
+
+    .comment-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-top: 0.8rem;
+    }
+
+    .comment-action-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary-light);
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.5rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+    body.dark-theme .comment-action-btn {
+        color: var(--text-secondary-dark);
+    }
+
+    .comment-action-btn:hover {
+        background: var(--bg-secondary-light);
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .comment-action-btn:hover {
+        background: var(--secondary-dark-theme);
+        color: var(--accent-gold);
+    }
+
+    .comment-action-btn.liked {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .comment-action-btn.liked {
+        color: var(--accent-gold);
+    }
+
+    .comment-action-btn i {
+        font-size: 0.95rem;
+    }
+
+    .comment-pin-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+
+    body.dark-theme .comment-pin-badge {
+        background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+        color: var(--primary-dark-theme);
+    }
+
+    .comment-author-link {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+
+    body.dark-theme .comment-author-link {
+        color: var(--text-dark);
+    }
+
+    .comment-author-link:hover {
+        color: var(--primary-light);
+    }
+
+    body.dark-theme .comment-author-link:hover {
+        color: var(--accent-gold);
     }
 
     /* Related Podcasts */
@@ -929,7 +1046,7 @@
                 <form class="comment-form" onsubmit="addComment(event)">
                     <textarea class="comment-textarea" id="commentText"
                               data-translate-placeholder="podcast.share_thoughts" placeholder="Share your thoughts..." required></textarea>
-                    <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+                    <button type="submit" class="btn-post-comment">
                         <i class="fas fa-paper-plane"></i> <span data-translate="podcast.post_comment">Post Comment</span>
                     </button>
                 </form>
@@ -941,14 +1058,48 @@
 
                 <div id="commentsList">
                     {% for comment in comments %}
-                    <div class="comment-item">
-                        <img src="{{ url_for('static', filename='images/' + comment.profile_image) }}"
-                             alt="{{ comment.username }}" class="comment-avatar"
-                             onerror="this.src='https://ui-avatars.com/api/?name={{ comment.username }}&background=FF6B35&color=fff'">
+                    <div class="comment-item" data-comment-id="{{ comment.id }}" style="{% if comment.is_pinned %}border-left: 4px solid var(--primary-light);{% endif %}">
+                        <a href="{{ url_for('profile', username=comment.username) }}">
+                            <img src="{{ url_for('static', filename='images/' + comment.profile_image) }}"
+                                 alt="{{ comment.username }}" class="comment-avatar"
+                                 onerror="this.src='https://ui-avatars.com/api/?name={{ comment.username }}&background=FF6B35&color=fff'">
+                        </a>
                         <div class="comment-content">
-                            <div class="comment-author">{{ comment.username }}</div>
+                            <div class="comment-author">
+                                <a href="{{ url_for('profile', username=comment.username) }}" class="comment-author-link">{{ comment.username }}</a>
+                                {% if comment.is_pinned %}
+                                <span class="comment-pin-badge">
+                                    <i class="fas fa-thumbtack"></i> Pinned
+                                </span>
+                                {% endif %}
+                            </div>
                             <div class="comment-text">{{ comment.content }}</div>
                             <div class="comment-time">{{ comment.created_at }}</div>
+
+                            <div class="comment-actions">
+                                {% if user %}
+                                <button class="comment-action-btn {% if comment.is_liked_by_user %}liked{% endif %}"
+                                        onclick="toggleCommentLike({{ comment.id }})"
+                                        data-comment-id="{{ comment.id }}">
+                                    <i class="{% if comment.is_liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                    <span class="like-count">{{ comment.likes_count or 0 }}</span>
+                                </button>
+
+                                {% if user.id == podcast.user_id %}
+                                <button class="comment-action-btn" onclick="togglePinComment({{ comment.id }})">
+                                    <i class="fas fa-thumbtack"></i>
+                                    <span>{% if comment.is_pinned %}Unpin{% else %}Pin{% endif %}</span>
+                                </button>
+                                {% endif %}
+
+                                {% if user.id == podcast.user_id or user.id == comment.user_id %}
+                                <button class="comment-action-btn" onclick="deleteComment({{ comment.id }})">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Delete</span>
+                                </button>
+                                {% endif %}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -1240,6 +1391,95 @@
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to add to playlist');
+        }
+    }
+
+    // Comment Like Function
+    async function toggleCommentLike(commentId) {
+        try {
+            const response = await fetch(`/api/comment/${commentId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const btn = document.querySelector(`button[data-comment-id="${commentId}"]`);
+                const icon = btn.querySelector('i');
+                const countSpan = btn.querySelector('.like-count');
+
+                if (data.is_liked) {
+                    btn.classList.add('liked');
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                } else {
+                    btn.classList.remove('liked');
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+
+                countSpan.textContent = data.likes_count;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Toggle Pin Comment Function
+    async function togglePinComment(commentId) {
+        try {
+            const response = await fetch(`/api/comment/${commentId}/pin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Failed to pin/unpin comment');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to pin/unpin comment');
+        }
+    }
+
+    // Delete Comment Function
+    async function deleteComment(commentId) {
+        if (!confirm('Are you sure you want to delete this comment?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/comment/${commentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+                commentElement.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => {
+                    commentElement.remove();
+                    location.reload();
+                }, 300);
+            } else {
+                alert(data.message || 'Failed to delete comment');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to delete comment');
         }
     }
 </script>
