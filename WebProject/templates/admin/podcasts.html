@@ -233,27 +233,27 @@
             <ul class="admin-nav">
                 <li>
                     <a href="{{ url_for('admin_dashboard') }}">
-                        <i class="fas fa-chart-line"></i> Dashboard
+                        <i class="fas fa-chart-line"></i> <span data-translate="admin.dashboard">Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_users') }}">
-                        <i class="fas fa-users"></i> Users
+                        <i class="fas fa-users"></i> <span data-translate="admin.users">Users</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_podcasts') }}" class="active">
-                        <i class="fas fa-podcast"></i> Podcasts
+                        <i class="fas fa-podcast"></i> <span data-translate="admin.podcasts">Podcasts</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_categories') }}">
-                        <i class="fas fa-tags"></i> Categories
+                        <i class="fas fa-tags"></i> <span data-translate="admin.categories">Categories</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('index') }}">
-                        <i class="fas fa-arrow-left"></i> Back to Site
+                        <i class="fas fa-arrow-left"></i> <span data-translate="admin.back_to_site">Back to Site</span>
                     </a>
                 </li>
             </ul>
@@ -262,20 +262,20 @@
         <!-- Main Content -->
         <main class="admin-main">
             <div class="admin-header">
-                <h1>Manage Podcasts</h1>
-                <p>View and manage all podcasts on the platform</p>
+                <h1 data-translate="admin.manage_podcasts">Manage Podcasts</h1>
+                <p data-translate="admin.manage_podcasts_desc">View and manage all podcasts on the platform</p>
             </div>
 
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Cover</th>
-                        <th>Title</th>
-                        <th>Creator</th>
-                        <th>Category</th>
-                        <th>Plays</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th data-translate="admin.cover">Cover</th>
+                        <th data-translate="admin.title">Title</th>
+                        <th data-translate="admin.creator">Creator</th>
+                        <th data-translate="admin.category">Category</th>
+                        <th data-translate="admin.plays">Plays</th>
+                        <th data-translate="admin.date">Date</th>
+                        <th data-translate="admin.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -293,7 +293,13 @@
                             </a>
                         </td>
                         <td>{{ podcast.username }}</td>
-                        <td>{{ podcast.category_name or 'Uncategorized' }}</td>
+                        <td>
+                            {% if podcast.category_name %}
+                                {{ podcast.category_name }}
+                            {% else %}
+                                <span data-translate="admin.uncategorized">Uncategorized</span>
+                            {% endif %}
+                        </td>
                         <td>{{ podcast.plays }}</td>
                         <td>{{ podcast.created_at }}</td>
                         <td>
@@ -301,7 +307,7 @@
                                   method="post" style="display: inline;"
                                   onsubmit="return confirm('Are you sure you want to delete this podcast?');">
                                 <button type="submit" class="btn-delete">
-                                    <i class="fas fa-trash"></i> Delete
+                                    <i class="fas fa-trash"></i> <span data-translate="common.delete">Delete</span>
                                 </button>
                             </form>
                         </td>

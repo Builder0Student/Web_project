@@ -17,20 +17,31 @@
         height: fit-content;
     }
 
-    .podcast-cover-large {
+    .cover-wrapper-large {
+        position: relative;
         width: 100%;
-        height: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
-        object-position: center;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
         border-radius: 20px;
         box-shadow: 0 10px 50px var(--shadow-light);
         margin-bottom: 1.5rem;
-        display: block;
     }
 
-    body.dark-theme .podcast-cover-large {
+    body.dark-theme .cover-wrapper-large {
         box-shadow: 0 10px 50px var(--shadow-dark);
+    }
+
+    .podcast-cover-large {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+        border-radius: 20px;
     }
 
     .podcast-actions {
@@ -711,10 +722,23 @@
         box-shadow: 0 8px 25px var(--shadow-dark);
     }
 
-    .related-cover {
+    .related-cover-wrapper {
+        position: relative;
         width: 100%;
-        aspect-ratio: 1;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+    }
+
+    .related-cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
+        object-position: center;
+        display: block;
     }
 
     .related-info {
@@ -786,9 +810,11 @@
     <div class="podcast-detail">
         <!-- Sidebar -->
         <div class="podcast-sidebar">
-            <img src="{{ url_for('static', filename='covers/' + podcast.cover_image) }}"
-                 alt="{{ podcast.title }}" class="podcast-cover-large"
-                 onerror="this.src='https://via.placeholder.com/400x400/FF6B35/ffffff?text={{ podcast.title[0] }}'">
+            <div class="cover-wrapper-large">
+                <img src="{{ url_for('static', filename='covers/' + podcast.cover_image) }}"
+                     alt="{{ podcast.title }}" class="podcast-cover-large"
+                     onerror="this.src='https://via.placeholder.com/400x400/FF6B35/ffffff?text={{ podcast.title[0] }}'">
+            </div>
 
             <div class="podcast-actions">
                 <button class="btn-action btn-favorite {% if is_favorited %}active{% endif %}"
@@ -938,9 +964,11 @@
         <div class="related-grid">
             {% for pod in related %}
             <a href="{{ url_for('podcast_detail', podcast_id=pod.id) }}" class="related-card">
-                <img src="{{ url_for('static', filename='covers/' + pod.cover_image) }}"
-                     alt="{{ pod.title }}" class="related-cover"
-                     onerror="this.src='https://via.placeholder.com/400x400/FF6B35/ffffff?text={{ pod.title[0] }}'">
+                <div class="related-cover-wrapper">
+                    <img src="{{ url_for('static', filename='covers/' + pod.cover_image) }}"
+                         alt="{{ pod.title }}" class="related-cover"
+                         onerror="this.src='https://via.placeholder.com/400x400/FF6B35/ffffff?text={{ pod.title[0] }}'">
+                </div>
                 <div class="related-info">
                     <div class="related-title">{{ pod.title }}</div>
                     <div class="related-author">{{ pod.username }}</div>

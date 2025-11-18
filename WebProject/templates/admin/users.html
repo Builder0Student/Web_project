@@ -297,27 +297,27 @@
             <ul class="admin-nav">
                 <li>
                     <a href="{{ url_for('admin_dashboard') }}">
-                        <i class="fas fa-chart-line"></i> Dashboard
+                        <i class="fas fa-chart-line"></i> <span data-translate="admin.dashboard">Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_users') }}" class="active">
-                        <i class="fas fa-users"></i> Users
+                        <i class="fas fa-users"></i> <span data-translate="admin.users">Users</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_podcasts') }}">
-                        <i class="fas fa-podcast"></i> Podcasts
+                        <i class="fas fa-podcast"></i> <span data-translate="admin.podcasts">Podcasts</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('admin_categories') }}">
-                        <i class="fas fa-tags"></i> Categories
+                        <i class="fas fa-tags"></i> <span data-translate="admin.categories">Categories</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url_for('index') }}">
-                        <i class="fas fa-arrow-left"></i> Back to Site
+                        <i class="fas fa-arrow-left"></i> <span data-translate="admin.back_to_site">Back to Site</span>
                     </a>
                 </li>
             </ul>
@@ -326,20 +326,20 @@
         <!-- Main Content -->
         <main class="admin-main">
             <div class="admin-header">
-                <h1>Manage Users</h1>
-                <p>View and manage all registered users</p>
+                <h1 data-translate="admin.manage_users">Manage Users</h1>
+                <p data-translate="admin.manage_users_desc">View and manage all registered users</p>
             </div>
 
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Full Name</th>
-                        <th>Role</th>
-                        <th>Joined</th>
-                        <th>Actions</th>
+                        <th data-translate="admin.id">ID</th>
+                        <th data-translate="admin.username">Username</th>
+                        <th data-translate="admin.email">Email</th>
+                        <th data-translate="admin.full_name">Full Name</th>
+                        <th data-translate="admin.role">Role</th>
+                        <th data-translate="admin.joined">Joined</th>
+                        <th data-translate="admin.actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -356,9 +356,9 @@
                         <td>{{ user_item.full_name or '-' }}</td>
                         <td>
                             {% if user_item.is_admin %}
-                            <span class="badge badge-admin">Admin</span>
+                            <span class="badge badge-admin" data-translate="admin.admin_badge">Admin</span>
                             {% else %}
-                            <span class="badge badge-user">User</span>
+                            <span class="badge badge-user" data-translate="admin.user_badge">User</span>
                             {% endif %}
                         </td>
                         <td>{{ user_item.created_at }}</td>
@@ -366,7 +366,7 @@
                             <div class="action-buttons">
                                 <!-- Edit Username -->
                                 <button class="btn-action btn-edit" onclick="editUsername({{ user_item.id }}, '{{ user_item.username }}')">
-                                    <i class="fas fa-edit"></i> Edit
+                                    <i class="fas fa-edit"></i> <span data-translate="common.edit">Edit</span>
                                 </button>
 
                                 <!-- Toggle Admin -->
@@ -374,7 +374,7 @@
                                 <form action="{{ url_for('admin_toggle_admin', user_id=user_item.id) }}" method="post" style="display: inline;">
                                     <button type="submit" class="btn-action btn-toggle"
                                             onclick="return confirm('Are you sure you want to {% if user_item.is_admin %}remove admin from{% else %}make{% endif %} {{ user_item.username }}{% if not user_item.is_admin %} an admin{% endif %}?');">
-                                        <i class="fas fa-user-shield"></i> {% if user_item.is_admin %}Demote{% else %}Promote{% endif %}
+                                        <i class="fas fa-user-shield"></i> {% if user_item.is_admin %}<span data-translate="admin.demote">Demote</span>{% else %}<span data-translate="admin.promote">Promote</span>{% endif %}
                                     </button>
                                 </form>
 
@@ -382,11 +382,11 @@
                                 <form action="{{ url_for('admin_delete_user', user_id=user_item.id) }}" method="post" style="display: inline;">
                                     <button type="submit" class="btn-action btn-delete"
                                             onclick="return confirm('Are you sure you want to delete {{ user_item.username }}? This will delete all their podcasts and data!');">
-                                        <i class="fas fa-trash"></i> Delete
+                                        <i class="fas fa-trash"></i> <span data-translate="common.delete">Delete</span>
                                     </button>
                                 </form>
                                 {% else %}
-                                <span style="color: var(--text-secondary-light); font-size: 0.85rem;">(You)</span>
+                                <span style="color: var(--text-secondary-light); font-size: 0.85rem;" data-translate="admin.you">(You)</span>
                                 {% endif %}
                             </div>
                         </td>
