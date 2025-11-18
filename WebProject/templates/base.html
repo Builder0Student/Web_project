@@ -580,6 +580,23 @@
         }
     </style>
     {% block extra_css %}{% endblock %}
+
+    <!-- Apply theme BEFORE page renders to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark-theme-loading');
+            }
+        })();
+    </script>
+    <style>
+        /* Apply dark theme immediately if needed */
+        .dark-theme-loading body {
+            background: #1A1A1A;
+            color: #FFFFFF;
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -859,8 +876,11 @@
 
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-theme');
+                document.documentElement.classList.remove('dark-theme-loading');
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
+            } else {
+                document.documentElement.classList.remove('dark-theme-loading');
             }
 
             // Load language preference

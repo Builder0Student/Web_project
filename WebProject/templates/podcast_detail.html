@@ -847,7 +847,7 @@
         <div class="podcast-main">
             <div class="podcast-header">
                 {% if podcast.category_name %}
-                <span class="podcast-category-detail">{{ podcast.category_name }}</span>
+                <span class="podcast-category-detail podcast-category" data-category-original="{{ podcast.category_name }}">{{ podcast.category_name }}</span>
                 {% endif %}
                 <h1 class="podcast-title-detail">{{ podcast.title }}</h1>
             </div>
