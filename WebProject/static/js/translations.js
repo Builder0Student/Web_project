@@ -81,6 +81,8 @@ const translations = {
         "podcast.my_playlist": "My Playlist",
         "podcast.description_optional": "Description (Optional)",
         "podcast.add_description": "Add a description",
+        "podcast.badge_admin": "Admin",
+        "podcast.badge_creator": "Content Creator",
         "podcast.create_playlist_btn": "Create Playlist",
 
         // Categories
@@ -123,6 +125,10 @@ const translations = {
 
         // Validation Messages
         "validation.field_required": "Please fill out this field",
+        "validation.username_special_chars": "Special characters are not allowed. Use only letters, numbers, and underscores",
+        "validation.username_too_short": "Username must be at least 3 characters",
+        "validation.invalid_email": "Please enter a valid email address",
+        "validation.password_min_length": "Password must be at least 6 characters",
         "validation.title_required": "Please enter a podcast title",
         "validation.title_short": "Title must be at least 3 characters long",
         "validation.category_required": "Please select a category",
@@ -397,6 +403,8 @@ const translations = {
         "podcast.playlist_name": "اسم قائمة التشغيل",
         "podcast.my_playlist": "قائمتي",
         "podcast.description_optional": "الوصف (اختياري)",
+        "podcast.badge_admin": "المشرف",
+        "podcast.badge_creator": "صانع المحتوى",
         "podcast.add_description": "أضف وصفاً",
         "podcast.create_playlist_btn": "إنشاء قائمة التشغيل",
 
@@ -426,6 +434,10 @@ const translations = {
 
         // Validation Messages
         "validation.field_required": "الرجاء ملء هذا الحقل",
+        "validation.username_special_chars": "الرموز الخاصة غير مسموحة. استخدم الحروف والأرقام والشرطة السفلية فقط",
+        "validation.username_too_short": "يجب أن يكون اسم المستخدم 3 أحرف على الأقل",
+        "validation.invalid_email": "الرجاء إدخال عنوان بريد إلكتروني صالح",
+        "validation.password_min_length": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
         "validation.title_required": "الرجاء إدخال عنوان البودكاست",
         "validation.title_short": "يجب أن يكون العنوان 3 أحرف على الأقل",
         "validation.category_required": "الرجاء اختيار تصنيف",

@@ -337,10 +337,10 @@ def podcast_detail(podcast_id):
         conn.close()
         return redirect(url_for('index'))
 
-    # Get comments with likes info
+    # Get comments with likes info and user roles
     user_id = session.get('user_id')
     comments_query = '''
-        SELECT c.*, u.username, u.profile_image,
+        SELECT c.*, u.username, u.profile_image, u.is_admin, u.is_creator,
                (SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes_count,
                {} as is_liked_by_user
         FROM comments c

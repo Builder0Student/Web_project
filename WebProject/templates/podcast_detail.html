@@ -806,6 +806,87 @@
         color: var(--accent-gold);
     }
 
+    .comment-role-badges {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-left: 0.5rem;
+    }
+
+    .comment-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        position: relative;
+        cursor: help;
+    }
+
+    .comment-badge-admin {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #1A1A1A;
+    }
+
+    .comment-badge-creator {
+        background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        color: white;
+    }
+
+    body.dark-theme .comment-badge-admin {
+        background: linear-gradient(135deg, #FFD700, #FFC107);
+        color: #1A1A1A;
+    }
+
+    body.dark-theme .comment-badge-creator {
+        background: linear-gradient(135deg, #60a5fa, #93c5fd);
+        color: #1A1A1A;
+    }
+
+    .comment-badge .tooltip {
+        visibility: hidden;
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--text-light);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.2s, visibility 0.2s;
+        font-weight: 500;
+    }
+
+    body.dark-theme .comment-badge .tooltip {
+        background: var(--accent-gold);
+        color: var(--primary-dark-theme);
+    }
+
+    .comment-badge:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .comment-badge .tooltip::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 5px solid transparent;
+        border-top-color: var(--text-light);
+    }
+
+    body.dark-theme .comment-badge .tooltip::after {
+        border-top-color: var(--accent-gold);
+    }
+
     /* Related Podcasts */
     .related-section {
         margin-top: 4rem;
@@ -1067,6 +1148,22 @@
                         <div class="comment-content">
                             <div class="comment-author">
                                 <a href="{{ url_for('profile', username=comment.username) }}" class="comment-author-link">{{ comment.username }}</a>
+
+                                <span class="comment-role-badges">
+                                    {% if comment.is_admin %}
+                                    <span class="comment-badge comment-badge-admin">
+                                        <i class="fas fa-crown"></i>
+                                        <span class="tooltip" data-translate="podcast.badge_admin">Admin</span>
+                                    </span>
+                                    {% endif %}
+                                    {% if comment.is_creator %}
+                                    <span class="comment-badge comment-badge-creator">
+                                        <i class="fas fa-check"></i>
+                                        <span class="tooltip" data-translate="podcast.badge_creator">Content Creator</span>
+                                    </span>
+                                    {% endif %}
+                                </span>
+
                                 {% if comment.is_pinned %}
                                 <span class="comment-pin-badge">
                                     <i class="fas fa-thumbtack"></i> Pinned

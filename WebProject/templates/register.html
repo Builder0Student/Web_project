@@ -388,7 +388,13 @@
             usernameInput.oninvalid = function(e) {
                 e.target.setCustomValidity('');
                 if (!e.target.validity.valid) {
-                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                    if (e.target.validity.valueMissing) {
+                        e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                    } else if (e.target.validity.patternMismatch) {
+                        e.target.setCustomValidity(translate('validation.username_special_chars', currentLang));
+                    } else if (e.target.validity.tooShort) {
+                        e.target.setCustomValidity(translate('validation.username_too_short', currentLang));
+                    }
                 }
             };
             usernameInput.oninput = function(e) {
@@ -399,7 +405,11 @@
             emailInput.oninvalid = function(e) {
                 e.target.setCustomValidity('');
                 if (!e.target.validity.valid) {
-                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                    if (e.target.validity.valueMissing) {
+                        e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                    } else if (e.target.validity.typeMismatch) {
+                        e.target.setCustomValidity(translate('validation.invalid_email', currentLang));
+                    }
                 }
             };
             emailInput.oninput = function(e) {
@@ -410,7 +420,11 @@
             passwordInput.oninvalid = function(e) {
                 e.target.setCustomValidity('');
                 if (!e.target.validity.valid) {
-                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                    if (e.target.validity.valueMissing) {
+                        e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                    } else if (e.target.validity.tooShort) {
+                        e.target.setCustomValidity(translate('validation.password_min_length', currentLang));
+                    }
                 }
             };
             passwordInput.oninput = function(e) {
