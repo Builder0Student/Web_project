@@ -84,6 +84,10 @@ const translations = {
         "podcast.badge_admin": "Admin",
         "podcast.badge_creator": "Content Creator",
         "podcast.create_playlist_btn": "Create Playlist",
+        "podcast.reply": "Reply",
+        "podcast.write_reply": "Write a reply...",
+        "podcast.post_reply": "Post Reply",
+        "podcast.cancel": "Cancel",
 
         // Categories
         "category.technology": "Technology",
@@ -407,6 +411,10 @@ const translations = {
         "podcast.badge_creator": "صانع المحتوى",
         "podcast.add_description": "أضف وصفاً",
         "podcast.create_playlist_btn": "إنشاء قائمة التشغيل",
+        "podcast.reply": "رد",
+        "podcast.write_reply": "اكتب رداً...",
+        "podcast.post_reply": "نشر الرد",
+        "podcast.cancel": "إلغاء",
 
         // Upload Page
         "upload.title": "ارفع البودكاست الخاص بك",

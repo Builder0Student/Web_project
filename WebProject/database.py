@@ -116,10 +116,12 @@ def init_db():
             podcast_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             content TEXT NOT NULL,
+            parent_id INTEGER DEFAULT NULL,
             is_pinned BOOLEAN DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (podcast_id) REFERENCES podcasts (id) ON DELETE CASCADE,
-            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+            FOREIGN KEY (parent_id) REFERENCES comments (id) ON DELETE CASCADE
         )
     ''')
 
@@ -128,6 +130,12 @@ def init_db():
         cursor.execute("SELECT is_pinned FROM comments LIMIT 1")
     except sqlite3.OperationalError:
         cursor.execute("ALTER TABLE comments ADD COLUMN is_pinned BOOLEAN DEFAULT 0")
+
+    # Add parent_id column if it doesn't exist (for existing databases)
+    try:
+        cursor.execute("SELECT parent_id FROM comments LIMIT 1")
+    except sqlite3.OperationalError:
+        cursor.execute("ALTER TABLE comments ADD COLUMN parent_id INTEGER DEFAULT NULL REFERENCES comments(id) ON DELETE CASCADE")
 
     # Listening history table
     cursor.execute('''

@@ -339,18 +339,44 @@ def podcast_detail(podcast_id):
 
     # Get comments with likes info and user roles
     user_id = session.get('user_id')
+    # Get top-level comments (parent comments only)
     comments_query = '''
+        SELECT c.*, u.username, u.profile_image, u.is_admin, u.is_creator,
+               (SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes_count,
+               {} as is_liked_by_user,
+               (SELECT COUNT(*) FROM comments WHERE parent_id = c.id) as replies_count
+        FROM comments c
+        LEFT JOIN users u ON c.user_id = u.id
+        WHERE c.podcast_id = ? AND c.parent_id IS NULL
+        ORDER BY c.is_pinned DESC, c.created_at DESC
+    '''.format(
+        f'(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id AND user_id = {user_id}) > 0' if user_id else '0'
+    )
+    parent_comments = conn.execute(comments_query, (podcast_id,)).fetchall()
+
+    # Get all replies for these comments
+    replies_query = '''
         SELECT c.*, u.username, u.profile_image, u.is_admin, u.is_creator,
                (SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes_count,
                {} as is_liked_by_user
         FROM comments c
         LEFT JOIN users u ON c.user_id = u.id
-        WHERE c.podcast_id = ?
-        ORDER BY c.is_pinned DESC, c.created_at DESC
+        WHERE c.podcast_id = ? AND c.parent_id IS NOT NULL
+        ORDER BY c.created_at ASC
     '''.format(
         f'(SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id AND user_id = {user_id}) > 0' if user_id else '0'
     )
-    comments = conn.execute(comments_query, (podcast_id,)).fetchall()
+    all_replies = conn.execute(replies_query, (podcast_id,)).fetchall()
+
+    # Organize replies by parent_id
+    replies_by_parent = {}
+    for reply in all_replies:
+        parent_id = reply['parent_id']
+        if parent_id not in replies_by_parent:
+            replies_by_parent[parent_id] = []
+        replies_by_parent[parent_id].append(reply)
+
+    comments = parent_comments
 
     # Get related podcasts
     related = conn.execute('''
@@ -387,6 +413,7 @@ def podcast_detail(podcast_id):
     return render_template('podcast_detail.html',
                            podcast=podcast,
                            comments=comments,
+                           replies_by_parent=replies_by_parent,
                            related=related,
                            is_favorited=is_favorited,
                            user=get_current_user())
@@ -678,15 +705,16 @@ def toggle_favorite(podcast_id):
 @login_required
 def add_comment(podcast_id):
     content = request.json.get('content')
+    parent_id = request.json.get('parent_id')  # Optional: for replies
 
     if not content:
         return jsonify({'success': False, 'message': 'Comment cannot be empty'}), 400
 
     conn = get_db()
     conn.execute('''
-        INSERT INTO comments (podcast_id, user_id, content)
-        VALUES (?, ?, ?)
-    ''', (podcast_id, session['user_id'], content))
+        INSERT INTO comments (podcast_id, user_id, content, parent_id)
+        VALUES (?, ?, ?, ?)
+    ''', (podcast_id, session['user_id'], content, parent_id))
     conn.commit()
     conn.close()
 

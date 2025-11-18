@@ -887,6 +887,70 @@
         border-top-color: var(--accent-gold);
     }
 
+    /* Reply Styles */
+    .reply-form {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--bg-light);
+        border-radius: 8px;
+        border: 2px solid var(--border-light);
+    }
+
+    body.dark-theme .reply-form {
+        background: var(--secondary-dark-theme);
+        border-color: var(--border-dark);
+    }
+
+    .btn-cancel-reply {
+        padding: 0.5rem 1rem;
+        background: var(--bg-secondary-light);
+        color: var(--text-light);
+        border: 2px solid var(--border-light);
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    body.dark-theme .btn-cancel-reply {
+        background: var(--primary-dark-theme);
+        color: var(--text-dark);
+        border-color: var(--border-dark);
+    }
+
+    .btn-cancel-reply:hover {
+        background: var(--border-light);
+        transform: translateY(-2px);
+    }
+
+    body.dark-theme .btn-cancel-reply:hover {
+        background: var(--border-dark);
+    }
+
+    .replies-container {
+        margin-top: 1rem;
+        margin-left: 3rem;
+        padding-left: 1.5rem;
+        border-left: 3px solid var(--border-light);
+    }
+
+    body.dark-theme .replies-container {
+        border-left-color: var(--border-dark);
+    }
+
+    .reply-item {
+        margin-bottom: 0.8rem;
+        padding: 1rem;
+        background: transparent;
+        border: 1px solid var(--border-light);
+    }
+
+    body.dark-theme .reply-item {
+        background: transparent;
+        border-color: var(--border-dark);
+    }
+
     /* Related Podcasts */
     .related-section {
         margin-top: 4rem;
@@ -1182,6 +1246,11 @@
                                     <span class="like-count">{{ comment.likes_count or 0 }}</span>
                                 </button>
 
+                                <button class="comment-action-btn" onclick="toggleReplyForm({{ comment.id }})">
+                                    <i class="fas fa-reply"></i>
+                                    <span data-translate="podcast.reply">Reply</span>
+                                </button>
+
                                 {% if user.id == podcast.user_id %}
                                 <button class="comment-action-btn" onclick="togglePinComment({{ comment.id }})">
                                     <i class="fas fa-thumbtack"></i>
@@ -1197,6 +1266,78 @@
                                 {% endif %}
                                 {% endif %}
                             </div>
+
+                            <!-- Reply Form (Hidden by default) -->
+                            {% if user %}
+                            <div class="reply-form" id="reply-form-{{ comment.id }}" style="display: none;">
+                                <textarea class="comment-textarea" id="reply-text-{{ comment.id }}"
+                                          data-translate-placeholder="podcast.write_reply" placeholder="Write a reply..." rows="3"></textarea>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <button class="btn-post-comment" style="padding: 0.5rem 1rem; font-size: 0.9rem;"
+                                            onclick="addReply({{ comment.id }})">
+                                        <i class="fas fa-paper-plane"></i> <span data-translate="podcast.post_reply">Post Reply</span>
+                                    </button>
+                                    <button class="btn-cancel-reply" onclick="toggleReplyForm({{ comment.id }})">
+                                        <span data-translate="podcast.cancel">Cancel</span>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Nested Replies -->
+                            {% if replies_by_parent[comment.id] %}
+                            <div class="replies-container">
+                                {% for reply in replies_by_parent[comment.id] %}
+                                <div class="comment-item reply-item" data-comment-id="{{ reply.id }}">
+                                    <a href="{{ url_for('profile', username=reply.username) }}">
+                                        <img src="{{ url_for('static', filename='images/' + reply.profile_image) }}"
+                                             alt="{{ reply.username }}" class="comment-avatar"
+                                             onerror="this.src='https://ui-avatars.com/api/?name={{ reply.username }}&background=FF6B35&color=fff'">
+                                    </a>
+                                    <div class="comment-content">
+                                        <div class="comment-author">
+                                            <a href="{{ url_for('profile', username=reply.username) }}" class="comment-author-link">{{ reply.username }}</a>
+
+                                            <span class="comment-role-badges">
+                                                {% if reply.is_admin %}
+                                                <span class="comment-badge comment-badge-admin">
+                                                    <i class="fas fa-crown"></i>
+                                                    <span class="tooltip" data-translate="podcast.badge_admin">Admin</span>
+                                                </span>
+                                                {% endif %}
+                                                {% if reply.is_creator %}
+                                                <span class="comment-badge comment-badge-creator">
+                                                    <i class="fas fa-check"></i>
+                                                    <span class="tooltip" data-translate="podcast.badge_creator">Content Creator</span>
+                                                </span>
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="comment-text">{{ reply.content }}</div>
+                                        <div class="comment-time">{{ reply.created_at }}</div>
+
+                                        <div class="comment-actions">
+                                            {% if user %}
+                                            <button class="comment-action-btn {% if reply.is_liked_by_user %}liked{% endif %}"
+                                                    onclick="toggleCommentLike({{ reply.id }})"
+                                                    data-comment-id="{{ reply.id }}">
+                                                <i class="{% if reply.is_liked_by_user %}fas{% else %}far{% endif %} fa-thumbs-up"></i>
+                                                <span class="like-count">{{ reply.likes_count or 0 }}</span>
+                                            </button>
+
+                                            {% if user.id == podcast.user_id or user.id == reply.user_id %}
+                                            <button class="comment-action-btn" onclick="deleteComment({{ reply.id }})">
+                                                <i class="fas fa-trash"></i>
+                                                <span>Delete</span>
+                                            </button>
+                                            {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -1577,6 +1718,55 @@
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to delete comment');
+        }
+    }
+
+    // Toggle Reply Form
+    function toggleReplyForm(commentId) {
+        const replyForm = document.getElementById(`reply-form-${commentId}`);
+        if (replyForm.style.display === 'none') {
+            // Hide all other reply forms
+            document.querySelectorAll('.reply-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            replyForm.style.display = 'block';
+            document.getElementById(`reply-text-${commentId}`).focus();
+        } else {
+            replyForm.style.display = 'none';
+        }
+    }
+
+    // Add Reply
+    async function addReply(parentId) {
+        const content = document.getElementById(`reply-text-${parentId}`).value.trim();
+
+        if (!content) {
+            alert('Reply cannot be empty');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/comment/{{ podcast.id }}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: content,
+                    parent_id: parentId
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Failed to post reply');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to post reply');
         }
     }
 </script>
