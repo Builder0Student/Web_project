@@ -767,10 +767,23 @@
             };
 
             // Translate all elements with category names
-            document.querySelectorAll('.podcast-category, .category-badge, select option').forEach(element => {
-                const originalText = element.textContent.trim();
+            document.querySelectorAll('.podcast-category, .category-badge').forEach(element => {
+                // Store original text if not already stored
+                if (!element.hasAttribute('data-category-original')) {
+                    element.setAttribute('data-category-original', element.textContent.trim());
+                }
+
+                const originalText = element.getAttribute('data-category-original');
                 if (categoryMap[originalText]) {
                     element.textContent = translate(categoryMap[originalText], lang);
+                }
+            });
+
+            // Translate select options with data-category-key
+            document.querySelectorAll('select option[data-category-key]').forEach(option => {
+                const categoryKey = option.getAttribute('data-category-key');
+                if (categoryMap[categoryKey]) {
+                    option.textContent = translate(categoryMap[categoryKey], lang);
                 }
             });
         }

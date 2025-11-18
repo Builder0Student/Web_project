@@ -330,19 +330,19 @@
 {% block content %}
 <div class="container">
     <div class="library-header">
-        <h1><i class="fas fa-bookmark"></i> My Library</h1>
-        <p>Your personal podcast collection</p>
+        <h1><i class="fas fa-bookmark"></i> <span data-translate="library.title">My Library</span></h1>
+        <p data-translate="library.subtitle">Your personal podcast collection</p>
     </div>
 
     <div class="library-tabs">
         <button class="tab-btn active" onclick="switchTab('favorites')">
-            <i class="fas fa-heart"></i> Favorites ({{ favorites|length }})
+            <i class="fas fa-heart"></i> <span data-translate="library.favorites">Favorites</span> ({{ favorites|length }})
         </button>
         <button class="tab-btn" onclick="switchTab('history')">
-            <i class="fas fa-history"></i> History ({{ history|length }})
+            <i class="fas fa-history"></i> <span data-translate="library.history">History</span> ({{ history|length }})
         </button>
         <button class="tab-btn" onclick="switchTab('playlists')">
-            <i class="fas fa-list"></i> Playlists ({{ playlists|length }})
+            <i class="fas fa-list"></i> <span data-translate="library.playlists">Playlists</span> ({{ playlists|length }})
         </button>
     </div>
 
@@ -365,7 +365,7 @@
                         {{ podcast.username }}
                     </p>
                     <div class="podcast-stats-small">
-                        <span><i class="fas fa-play-circle"></i> {{ podcast.plays }} plays</span>
+                        <span><i class="fas fa-play-circle"></i> {{ podcast.plays }} <span data-translate="library.plays">plays</span></span>
                     </div>
                 </div>
             </a>
@@ -374,10 +374,10 @@
         {% else %}
         <div class="empty-state">
             <i class="fas fa-heart-broken"></i>
-            <h3>No Favorites Yet</h3>
-            <p>Start exploring and save your favorite podcasts</p>
+            <h3 data-translate="library.no_favorites">No Favorites Yet</h3>
+            <p data-translate="library.no_favorites_desc">Start exploring and save your favorite podcasts</p>
             <a href="{{ url_for('browse') }}" class="btn btn-primary">
-                <i class="fas fa-compass"></i> Browse Podcasts
+                <i class="fas fa-compass"></i> <span data-translate="library.browse_podcasts">Browse Podcasts</span>
             </a>
         </div>
         {% endif %}
@@ -402,7 +402,7 @@
                         {{ podcast.username }}
                     </p>
                     <div class="podcast-stats-small">
-                        <span><i class="fas fa-clock"></i> Recently listened</span>
+                        <span><i class="fas fa-clock"></i> <span data-translate="library.recently_listened">Recently listened</span></span>
                     </div>
                 </div>
             </a>
@@ -411,10 +411,10 @@
         {% else %}
         <div class="empty-state">
             <i class="fas fa-history"></i>
-            <h3>No Listening History</h3>
-            <p>Your recently played podcasts will appear here</p>
+            <h3 data-translate="library.no_history">No Listening History</h3>
+            <p data-translate="library.no_history_desc">Your recently played podcasts will appear here</p>
             <a href="{{ url_for('browse') }}" class="btn btn-primary">
-                <i class="fas fa-compass"></i> Discover Podcasts
+                <i class="fas fa-compass"></i> <span data-translate="library.discover_podcasts">Discover Podcasts</span>
             </a>
         </div>
         {% endif %}
@@ -430,15 +430,15 @@
                     <i class="fas fa-list-ul"></i>
                 </div>
                 <h3 class="playlist-name">{{ playlist.name }}</h3>
-                <p class="playlist-count">{{ playlist.podcast_count }} podcasts</p>
+                <p class="playlist-count">{{ playlist.podcast_count }} <span data-translate="library.podcasts">podcasts</span></p>
             </a>
             {% endfor %}
         </div>
         {% else %}
         <div class="empty-state">
             <i class="fas fa-list"></i>
-            <h3>No Playlists Yet</h3>
-            <p>Create playlists to organize your favorite podcasts</p>
+            <h3 data-translate="library.no_playlists">No Playlists Yet</h3>
+            <p data-translate="library.no_playlists_desc">Create playlists to organize your favorite podcasts</p>
         </div>
         {% endif %}
     </div>

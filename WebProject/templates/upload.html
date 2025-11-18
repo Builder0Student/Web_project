@@ -493,7 +493,7 @@
                         <select id="category_id" name="category_id" class="form-select" required>
                             <option value="" data-translate="upload.select_category">Select a category</option>
                             {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            <option value="{{ category.id }}" data-category-key="{{ category.name }}">{{ category.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -782,7 +782,7 @@
     function translateCategoryNames() {
         const currentLang = localStorage.getItem('language') || 'en';
         const categorySelect = document.getElementById('category_id');
-        const options = categorySelect.querySelectorAll('option');
+        const options = categorySelect.querySelectorAll('option[data-category-key]');
 
         // Category name mapping (English to translation key)
         const categoryMap = {
@@ -801,9 +801,9 @@
         };
 
         options.forEach(option => {
-            const originalText = option.textContent.trim();
-            if (categoryMap[originalText]) {
-                option.textContent = translate(categoryMap[originalText], currentLang);
+            const categoryKey = option.getAttribute('data-category-key');
+            if (categoryMap[categoryKey]) {
+                option.textContent = translate(categoryMap[categoryKey], currentLang);
             }
         });
     }

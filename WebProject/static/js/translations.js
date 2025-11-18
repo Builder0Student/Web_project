@@ -199,6 +199,24 @@ const translations = {
         "playlist.empty_title": "No podcasts in this playlist",
         "playlist.empty_desc": "Start adding podcasts to this playlist from the podcast pages",
 
+        // Library
+        "library.title": "My Library",
+        "library.subtitle": "Your personal podcast collection",
+        "library.favorites": "Favorites",
+        "library.history": "History",
+        "library.playlists": "Playlists",
+        "library.plays": "plays",
+        "library.recently_listened": "Recently listened",
+        "library.no_favorites": "No Favorites Yet",
+        "library.no_favorites_desc": "Start exploring and save your favorite podcasts",
+        "library.browse_podcasts": "Browse Podcasts",
+        "library.no_history": "No Listening History",
+        "library.no_history_desc": "Your recently played podcasts will appear here",
+        "library.discover_podcasts": "Discover Podcasts",
+        "library.no_playlists": "No Playlists Yet",
+        "library.no_playlists_desc": "Create playlists to organize your favorite podcasts",
+        "library.podcasts": "podcasts",
+
         // Admin
         "admin.dashboard": "Dashboard",
         "admin.users": "Users",
@@ -483,6 +501,24 @@ const translations = {
         "playlist.podcasts_count": "بودكاست",
         "playlist.empty_title": "لا توجد بودكاست في هذه القائمة",
         "playlist.empty_desc": "ابدأ بإضافة بودكاست إلى هذه القائمة من صفحات البودكاست",
+
+        // Library
+        "library.title": "مكتبتي",
+        "library.subtitle": "مجموعة البودكاست الشخصية الخاصة بك",
+        "library.favorites": "المفضلة",
+        "library.history": "السجل",
+        "library.playlists": "قوائم التشغيل",
+        "library.plays": "مرات تشغيل",
+        "library.recently_listened": "استمعت مؤخراً",
+        "library.no_favorites": "لا توجد مفضلة بعد",
+        "library.no_favorites_desc": "ابدأ في الاستكشاف واحفظ البودكاست المفضلة لديك",
+        "library.browse_podcasts": "تصفح البودكاست",
+        "library.no_history": "لا يوجد سجل استماع",
+        "library.no_history_desc": "ستظهر البودكاست التي تم تشغيلها مؤخراً هنا",
+        "library.discover_podcasts": "اكتشف البودكاست",
+        "library.no_playlists": "لا توجد قوائم تشغيل بعد",
+        "library.no_playlists_desc": "أنشئ قوائم تشغيل لتنظيم البودكاست المفضلة لديك",
+        "library.podcasts": "بودكاست",
 
         // Admin
         "admin.dashboard": "لوحة التحكم",
