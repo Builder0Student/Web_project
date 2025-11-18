@@ -602,6 +602,41 @@ def library():
                            user=get_current_user())
 
 
+@app.route('/playlist/<int:playlist_id>')
+@login_required
+def playlist_detail(playlist_id):
+    conn = get_db()
+
+    # Get playlist info
+    playlist = conn.execute('''
+        SELECT * FROM playlists WHERE id = ? AND user_id = ?
+    ''', (playlist_id, session['user_id'])).fetchone()
+
+    if not playlist:
+        flash('Playlist not found', 'error')
+        conn.close()
+        return redirect(url_for('library'))
+
+    # Get podcasts in the playlist
+    podcasts = conn.execute('''
+        SELECT p.*, u.username, c.name as category_name,
+               (SELECT COUNT(*) FROM favorites WHERE podcast_id = p.id) as favorites_count
+        FROM playlist_items pi
+        JOIN podcasts p ON pi.podcast_id = p.id
+        LEFT JOIN users u ON p.user_id = u.id
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE pi.playlist_id = ?
+        ORDER BY pi.added_at DESC
+    ''', (playlist_id,)).fetchall()
+
+    conn.close()
+
+    return render_template('playlist_detail.html',
+                           playlist=playlist,
+                           podcasts=podcasts,
+                           user=get_current_user())
+
+
 # API Routes
 @app.route('/api/favorite/<int:podcast_id>', methods=['POST'])
 @login_required

@@ -742,8 +742,37 @@
             // Translate flash messages
             translateFlashMessages(newLang);
 
+            // Translate categories
+            translateCategories(newLang);
+
             // Dispatch language change event for custom validation messages
             window.dispatchEvent(new Event('languageChanged'));
+        }
+
+        // Translate category names globally
+        function translateCategories(lang) {
+            const categoryMap = {
+                'Technology': 'category.technology',
+                'Business': 'category.business',
+                'Education': 'category.education',
+                'Entertainment': 'category.entertainment',
+                'Sports': 'category.sports',
+                'Health': 'category.health',
+                'News': 'category.news',
+                'Comedy': 'category.comedy',
+                'History': 'category.history',
+                'Science': 'category.science',
+                'Arts': 'category.arts',
+                'Music': 'category.music'
+            };
+
+            // Translate all elements with category names
+            document.querySelectorAll('.podcast-category, .category-badge, select option').forEach(element => {
+                const originalText = element.textContent.trim();
+                if (categoryMap[originalText]) {
+                    element.textContent = translate(categoryMap[originalText], lang);
+                }
+            });
         }
 
         // Translate flash messages
@@ -841,6 +870,9 @@
 
             // Translate flash messages on page load
             translateFlashMessages(savedLang);
+
+            // Translate categories on page load
+            translateCategories(savedLang);
         });
 
         // Auto-dismiss flash messages

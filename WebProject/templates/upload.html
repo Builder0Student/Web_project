@@ -777,5 +777,92 @@
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + submitText.textContent;
         submitBtn.disabled = true;
     });
+
+    // Translate category names
+    function translateCategoryNames() {
+        const currentLang = localStorage.getItem('language') || 'en';
+        const categorySelect = document.getElementById('category_id');
+        const options = categorySelect.querySelectorAll('option');
+
+        // Category name mapping (English to translation key)
+        const categoryMap = {
+            'Technology': 'category.technology',
+            'Business': 'category.business',
+            'Education': 'category.education',
+            'Entertainment': 'category.entertainment',
+            'Sports': 'category.sports',
+            'Health': 'category.health',
+            'News': 'category.news',
+            'Comedy': 'category.comedy',
+            'History': 'category.history',
+            'Science': 'category.science',
+            'Arts': 'category.arts',
+            'Music': 'category.music'
+        };
+
+        options.forEach(option => {
+            const originalText = option.textContent.trim();
+            if (categoryMap[originalText]) {
+                option.textContent = translate(categoryMap[originalText], currentLang);
+            }
+        });
+    }
+
+    // Custom validation messages for HTML5 validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.getElementById('title');
+        const categorySelect = document.getElementById('category_id');
+        const mediaFileInput = document.getElementById('audio_file');
+
+        // Translate categories on page load
+        translateCategoryNames();
+
+        function updateValidationMessages() {
+            const currentLang = localStorage.getItem('language') || 'en';
+
+            // Translate categories when language changes
+            translateCategoryNames();
+
+            // Title validation
+            titleInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+            titleInput.oninput = function(e) {
+                e.target.setCustomValidity('');
+            };
+
+            // Category validation
+            categorySelect.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(translate('validation.field_required', currentLang));
+                }
+            };
+            categorySelect.onchange = function(e) {
+                e.target.setCustomValidity('');
+            };
+
+            // Media file validation
+            mediaFileInput.oninvalid = function(e) {
+                e.target.setCustomValidity('');
+                if (!e.target.validity.valid) {
+                    const mediaType = document.querySelector('input[name="media_type"]:checked').value;
+                    const message = mediaType === 'video' ?
+                        translate('validation.video_required', currentLang) :
+                        translate('validation.audio_required', currentLang);
+                    e.target.setCustomValidity(message);
+                }
+            };
+            mediaFileInput.onchange = function(e) {
+                e.target.setCustomValidity('');
+            };
+        }
+
+        updateValidationMessages();
+        window.addEventListener('languageChanged', updateValidationMessages);
+    });
 </script>
 {% endblock %}

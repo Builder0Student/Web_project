@@ -425,13 +425,13 @@
         {% if playlists %}
         <div class="playlist-grid">
             {% for playlist in playlists %}
-            <div class="playlist-card">
+            <a href="{{ url_for('playlist_detail', playlist_id=playlist.id) }}" class="playlist-card" style="text-decoration: none; color: inherit; display: block;">
                 <div class="playlist-icon">
                     <i class="fas fa-list-ul"></i>
                 </div>
                 <h3 class="playlist-name">{{ playlist.name }}</h3>
                 <p class="playlist-count">{{ playlist.podcast_count }} podcasts</p>
-            </div>
+            </a>
             {% endfor %}
         </div>
         {% else %}

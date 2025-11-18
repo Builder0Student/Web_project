@@ -194,6 +194,10 @@ const translations = {
         "playlist.added": "Added to",
         "playlist.already_exists": "Podcast already in playlist",
         "playlist.created": "Playlist created successfully!",
+        "playlist.back_to_library": "Back to Library",
+        "playlist.podcasts_count": "podcasts",
+        "playlist.empty_title": "No podcasts in this playlist",
+        "playlist.empty_desc": "Start adding podcasts to this playlist from the podcast pages",
 
         // Admin
         "admin.dashboard": "Dashboard",
@@ -475,6 +479,10 @@ const translations = {
         "playlist.added": "تمت الإضافة إلى",
         "playlist.already_exists": "البودكاست موجود بالفعل في القائمة",
         "playlist.created": "تم إنشاء قائمة التشغيل بنجاح!",
+        "playlist.back_to_library": "العودة إلى المكتبة",
+        "playlist.podcasts_count": "بودكاست",
+        "playlist.empty_title": "لا توجد بودكاست في هذه القائمة",
+        "playlist.empty_desc": "ابدأ بإضافة بودكاست إلى هذه القائمة من صفحات البودكاست",
 
         // Admin
         "admin.dashboard": "لوحة التحكم",
