@@ -1220,7 +1220,7 @@
                                         <span class="tooltip" data-translate="podcast.badge_admin">Admin</span>
                                     </span>
                                     {% endif %}
-                                    {% if comment.is_creator %}
+                                    {% if comment.user_id == podcast.user_id %}
                                     <span class="comment-badge comment-badge-creator">
                                         <i class="fas fa-check"></i>
                                         <span class="tooltip" data-translate="podcast.badge_creator">Content Creator</span>
@@ -1305,7 +1305,7 @@
                                                     <span class="tooltip" data-translate="podcast.badge_admin">Admin</span>
                                                 </span>
                                                 {% endif %}
-                                                {% if reply.is_creator %}
+                                                {% if reply.user_id == podcast.user_id %}
                                                 <span class="comment-badge comment-badge-creator">
                                                     <i class="fas fa-check"></i>
                                                     <span class="tooltip" data-translate="podcast.badge_creator">Content Creator</span>

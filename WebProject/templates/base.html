@@ -1053,6 +1053,9 @@
                 {% if user %}
                 <li><a href="{{ url_for('library') }}"><i class="fas fa-bookmark"></i> <span data-translate="nav.library">Library</span></a></li>
                 <li><a href="{{ url_for('upload') }}"><i class="fas fa-cloud-upload-alt"></i> <span data-translate="nav.upload">Upload</span></a></li>
+                    {% if user.is_admin %}
+                    <li><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-cog"></i> <span data-translate="nav.admin">Admin</span></a></li>
+                    {% endif %}
                 {% endif %}
             </ul>
 
@@ -1074,11 +1077,6 @@
                 </button>
 
                 {% if user %}
-                    {% if user.is_admin %}
-                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
-                        <i class="fas fa-cog"></i> <span data-translate="nav.admin">Admin</span>
-                    </a>
-                    {% endif %}
                     <div class="user-menu">
                         <a href="{{ url_for('profile', username=user.username) }}">
                             <img src="{{ url_for('static', filename='images/' + user.profile_image) }}"

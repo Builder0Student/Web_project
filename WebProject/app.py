@@ -341,7 +341,7 @@ def podcast_detail(podcast_id):
     user_id = session.get('user_id')
     # Get top-level comments (parent comments only)
     comments_query = '''
-        SELECT c.*, u.username, u.profile_image, u.is_admin, u.is_creator,
+        SELECT c.*, u.username, u.profile_image, u.is_admin,
                (SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes_count,
                {} as is_liked_by_user,
                (SELECT COUNT(*) FROM comments WHERE parent_id = c.id) as replies_count
@@ -356,7 +356,7 @@ def podcast_detail(podcast_id):
 
     # Get all replies for these comments
     replies_query = '''
-        SELECT c.*, u.username, u.profile_image, u.is_admin, u.is_creator,
+        SELECT c.*, u.username, u.profile_image, u.is_admin,
                (SELECT COUNT(*) FROM comment_likes WHERE comment_id = c.id) as likes_count,
                {} as is_liked_by_user
         FROM comments c
